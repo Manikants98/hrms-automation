@@ -1,0 +1,44 @@
+{
+  "name": "hrms-automation",
+  "version": "1.0.0",
+  "description": "HRMS Automation System",
+  "private": true,
+  "workspaces": [
+    "hrms-automation-be",
+    "hrms-automation-fe"
+  ],
+  "scripts": {
+    "setup": "npm install && npm run prisma:generate",
+    "dev": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" --kill-others \"npm run dev --workspace=dcc-sfa-be\" \"npm run dev --workspace=dcc-sfa-fe\"",
+    "build": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" \"npm run build --workspace=dcc-sfa-be\" \"npm run build --workspace=dcc-sfa-fe\"",
+    "start": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" \"npm run start --workspace=dcc-sfa-be\" \"npm run preview --workspace=dcc-sfa-fe\"",
+    "prisma:generate": "npm run prisma:generate --workspace=dcc-sfa-be",
+    "seed:clean": "npm run seed:clean --workspace=dcc-sfa-be",
+    "seed:generate": "npm run seed:generate --workspace=dcc-sfa-be",
+    "seed": "npm run seed --workspace=dcc-sfa-be",
+    "pull": "git pull origin main && npm run build && npm run start",
+    "push": "git push origin main && npm run build && npm run start",
+    "create:admin": "npm run create:admin --workspace=dcc-sfa-be",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "clean": "npx kill-port 4000 5173 && npx rimraf node_modules dcc-sfa-be/node_modules dcc-sfa-fe/node_modules"
+  },
+  "devDependencies": {
+    "@types/mssql": "^9.1.8",
+    "@types/node-cron": "^3.0.11",
+    "concurrently": "^9.1.0",
+    "prettier": "^3.0.0",
+    "prisma": "^7.1.0",
+    "rimraf": "^5.0.0"
+  },
+  "packageManager": "npm@10.0.0",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "@prisma/adapter-mssql": "^7.1.0",
+    "@prisma/client": "^7.1.0",
+    "mssql": "^12.2.0",
+    "node-cron": "^4.2.1",
+    "recharts": "^3.3.0"
+  }
+}
