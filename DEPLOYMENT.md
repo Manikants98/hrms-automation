@@ -81,10 +81,16 @@ After deployment, Vercel will provide you with a URL like:
 5. Add Environment Variables:
    - `NODE_ENV`: `production`
    - `PORT`: `4001` (or leave empty, Render will assign)
-   - `DATABASE_URL`: Your SQL Server connection string
+   - `PRISMA_DATABASE_URL`: Your Prisma Accelerate connection string (recommended)
+     OR
+   - `DATABASE_URL`: Your PostgreSQL connection string
+     OR
+   - `POSTGRES_URL`: Alternative PostgreSQL connection string
    - `JWT_SECRET`: A secure random string
    - `JWT_EXPIRES_IN`: `7d`
    - Add any other required environment variables
+
+   **Note**: The backend will use `PRISMA_DATABASE_URL` first, then `DATABASE_URL`, then `POSTGRES_URL` in that order.
 
 6. Click "Create Web Service"
 
@@ -142,11 +148,18 @@ If Vercel doesn't work, you can use Netlify:
 
 - `NODE_ENV` - `production`
 - `PORT` - Port number (auto-assigned on Render)
-- `DATABASE_URL` - SQL Server connection string
+- `PRISMA_DATABASE_URL` - Prisma Accelerate connection string (recommended for production)
+  OR
+- `DATABASE_URL` - PostgreSQL connection string
+  OR
+- `POSTGRES_URL` - Alternative PostgreSQL connection string
 - `JWT_SECRET` - Secret key for JWT tokens
 - `JWT_EXPIRES_IN` - Token expiration (e.g., `7d`)
 - `EMAIL_HOST` - SMTP host (optional)
 - `EMAIL_PORT` - SMTP port (optional)
+
+**Database Connection Priority**: `PRISMA_DATABASE_URL` > `DATABASE_URL` > `POSTGRES_URL`
+
 - `EMAIL_USER` - Email username (optional)
 - `EMAIL_PASS` - Email password (optional)
 
