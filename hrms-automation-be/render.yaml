@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: hrms-automation-be
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build && npm run prisma:generate
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4001
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+    healthCheckPath: /api/v1/health

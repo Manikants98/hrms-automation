@@ -11,19 +11,21 @@ export const startServer = async () => {
   try {
     const app = createApp();
 
-    if (await isPortInUse(port)) {
-      logger.warn(
-        `Port ${port} is in use. Attempting to kill existing processes...`
-      );
-      await killPort(port);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    if (process.env.NODE_ENV !== 'production') {
+      if (await isPortInUse(port)) {
+        logger.warn(
+          `Port ${port} is in use. Attempting to kill existing processes...`
+        );
+        await killPort(port);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
     }
 
-    const server = app.listen(port, async () => {
+    const server = app.listen(port, '0.0.0.0', async () => {
       AttendanceCronService.startAutoPunchOut();
       AttendanceCronService.startMidnightStatusReset();
       logger.info('Attendance cron jobs started');
-      logger.success(`Server running at http://localhost:${port}`);
+      logger.success(`Server running at http://0.0.0.0:${port}`);
     });
 
     server.on('error', error => {
