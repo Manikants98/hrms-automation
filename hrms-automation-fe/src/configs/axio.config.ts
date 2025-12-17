@@ -76,22 +76,49 @@ axiosInstance.interceptors.request.use(
       const token = tokenService.getToken();
 
       if (token) {
-        config.headers.set('Authorization', `Bearer ${token}`);
-
-        const user = tokenService.getUser();
-        if (user) {
-          config.headers.set('X-User-ID', user.id.toString());
-          config.headers.set('X-User-Role', user.role);
-          if (user.depot_id) {
-            config.headers.set('X-Depot-ID', user.depot_id.toString());
+        if (config.headers) {
+          if (typeof config.headers.set === 'function') {
+            config.headers.set('Authorization', `Bearer ${token}`);
+          } else {
+            config.headers['Authorization'] = `Bearer ${token}`;
           }
-          if (user.zone_id) {
-            config.headers.set('X-Zone-ID', user.zone_id.toString());
+
+          const user = tokenService.getUser();
+          if (user) {
+            if (typeof config.headers.set === 'function') {
+              config.headers.set('X-User-ID', user.id.toString());
+              config.headers.set('X-User-Role', user.role);
+              if (user.depot_id) {
+                config.headers.set('X-Depot-ID', user.depot_id.toString());
+              }
+              if (user.zone_id) {
+                config.headers.set('X-Zone-ID', user.zone_id.toString());
+              }
+            } else {
+              config.headers['X-User-ID'] = user.id.toString();
+              config.headers['X-User-Role'] = user.role;
+              if (user.depot_id) {
+                config.headers['X-Depot-ID'] = user.depot_id.toString();
+              }
+              if (user.zone_id) {
+                config.headers['X-Zone-ID'] = user.zone_id.toString();
+              }
+            }
+          }
+
+          if (typeof config.headers.set === 'function') {
+            config.headers.set('X-Request-ID', generateRequestId());
+          } else {
+            config.headers['X-Request-ID'] = generateRequestId();
           }
         }
+      } else {
+        if (config.headers && typeof config.headers.set === 'function') {
+          config.headers.set('X-Request-ID', generateRequestId());
+        } else if (config.headers) {
+          config.headers['X-Request-ID'] = generateRequestId();
+        }
       }
-
-      config.headers.set('X-Request-ID', generateRequestId());
 
       if (import.meta.env.VITE_APP_ENV === 'development') {
         console.log(

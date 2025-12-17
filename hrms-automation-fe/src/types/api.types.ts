@@ -259,8 +259,9 @@ export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 /**
  * Extended Axios response with custom properties
  */
-export interface CustomAxiosResponse<T = any>
-  extends AxiosResponse<ApiResponse<T>> {
+export interface CustomAxiosResponse<T = any> extends AxiosResponse<
+  ApiResponse<T>
+> {
   config: CustomAxiosRequestConfig;
 }
 
