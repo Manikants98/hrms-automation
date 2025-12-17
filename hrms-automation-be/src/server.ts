@@ -5,7 +5,7 @@ import { killPort, isPortInUse } from './utils/killPort';
 import { AttendanceCronService } from './v1/services/attendance.cron.service';
 dotenv.config({ quiet: true });
 
-const port = process.env.PORT || 4000;
+const port = Number(process.env.PORT) || 4000;
 
 export const startServer = async () => {
   try {
