@@ -9,18 +9,18 @@
   ],
   "scripts": {
     "setup": "npm install && npm run prisma:generate",
-    "dev": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" --kill-others \"npm run dev --workspace=dcc-sfa-be\" \"npm run dev --workspace=dcc-sfa-fe\"",
-    "build": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" \"npm run build --workspace=dcc-sfa-be\" \"npm run build --workspace=dcc-sfa-fe\"",
-    "start": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" \"npm run start --workspace=dcc-sfa-be\" \"npm run preview --workspace=dcc-sfa-fe\"",
-    "prisma:generate": "npm run prisma:generate --workspace=dcc-sfa-be",
-    "seed:clean": "npm run seed:clean --workspace=dcc-sfa-be",
-    "seed:generate": "npm run seed:generate --workspace=dcc-sfa-be",
-    "seed": "npm run seed --workspace=dcc-sfa-be",
+    "dev": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" --kill-others \"npm run dev --workspace=hrms-automation-be\" \"npm run dev --workspace=hrms-automation-fe\"",
+    "build": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" \"npm run build --workspace=hrms-automation-be\" \"npm run build --workspace=hrms-automation-fe\"",
+    "start": "concurrently --names \"BE,FE\" --prefix-colors \"blue,green\" \"npm run start --workspace=hrms-automation-be\" \"npm run preview --workspace=hrms-automation-fe\"",
+    "prisma:generate": "npm run prisma:generate --workspace=hrms-automation-be",
+    "seed:clean": "npm run seed:clean --workspace=hrms-automation-be",
+    "seed:generate": "npm run seed:generate --workspace=hrms-automation-be",
+    "seed": "npm run seed --workspace=hrms-automation-be",
     "pull": "git pull origin main && npm run build && npm run start",
     "push": "git push origin main && npm run build && npm run start",
-    "create:admin": "npm run create:admin --workspace=dcc-sfa-be",
+    "create:admin": "npm run create:admin --workspace=hrms-automation-be",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "clean": "npx kill-port 4000 5173 && npx rimraf node_modules dcc-sfa-be/node_modules dcc-sfa-fe/node_modules"
+    "clean": "npx kill-port 4000 5173 && npx rimraf node_modules hrms-automation-be/node_modules hrms-automation-fe/node_modules"
   },
   "devDependencies": {
     "@types/mssql": "^9.1.8",
