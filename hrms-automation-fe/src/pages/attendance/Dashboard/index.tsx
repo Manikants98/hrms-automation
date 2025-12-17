@@ -1,4 +1,4 @@
-import { Box, Chip, Typography } from '@mui/material';
+import { Chip, Typography } from '@mui/material';
 import {
   ArcElement,
   BarElement,
@@ -31,7 +31,7 @@ import {
 import React, { useMemo } from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import StatsCard from 'shared/StatsCard';
-import Table, { type TableColumn } from 'shared/Table';
+import Table from 'shared/Table';
 import { formatDate } from 'utils/dateUtils';
 import dayjs from 'dayjs';
 

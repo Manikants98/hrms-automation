@@ -1,6 +1,5 @@
 import { Download } from '@mui/icons-material';
 import { Avatar, Box, Chip, MenuItem, Typography } from '@mui/material';
-import dayjs from 'dayjs';
 import { useEmployees } from 'hooks/useEmployees';
 import { useExportToExcel } from 'hooks/useImportExport';
 import {
@@ -10,7 +9,6 @@ import {
 } from 'hooks/usePayrollProcessing';
 import { useSalarySlips, type SalarySlip } from 'hooks/useSalarySlips';
 import {
-  Briefcase,
   CheckCircle,
   Clock,
   DollarSign,
@@ -23,7 +21,6 @@ import {
 import React, { useCallback, useMemo, useState } from 'react';
 import Button from 'shared/Button';
 import { PopConfirm } from 'shared/DeleteConfirmation';
-import Input from 'shared/Input';
 import SearchInput from 'shared/SearchInput';
 import Select from 'shared/Select';
 import StatsCard from 'shared/StatsCard';
@@ -40,9 +37,9 @@ const PayrollReports: React.FC = () => {
   const [monthFilter, setMonthFilter] = useState<string>('');
   const [yearFilter, setYearFilter] = useState<number | ''>('');
   const [payrollPage, setPayrollPage] = useState(0);
-  const [payrollRowsPerPage, setPayrollRowsPerPage] = useState(10);
+  const [payrollRowsPerPage] = useState(10);
   const [slipsPage, setSlipsPage] = useState(0);
-  const [slipsRowsPerPage, setSlipsRowsPerPage] = useState(10);
+  const [slipsRowsPerPage] = useState(10);
 
   const { data: employeesResponse, isLoading: employeesLoading } = useEmployees(
     {

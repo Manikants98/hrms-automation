@@ -37,7 +37,7 @@ const AttendanceReports: React.FC = () => {
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(10);
 
   const { data: employeesResponse, isLoading: employeesLoading } = useEmployees(
     {

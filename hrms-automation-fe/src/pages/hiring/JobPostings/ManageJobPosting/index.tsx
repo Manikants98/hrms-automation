@@ -2,7 +2,6 @@ import { Add, Delete, DragIndicator } from '@mui/icons-material';
 import {
   Badge,
   Box,
-  Chip,
   IconButton,
   MenuItem,
   Paper,
@@ -19,8 +18,6 @@ import {
   useCreateJobPosting,
   useUpdateJobPosting,
   type JobPosting,
-  type HiringStageSequence,
-  type AttachmentRequired,
 } from 'hooks/useJobPostings';
 import { useHiringStages } from 'hooks/useHiringStages';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -239,15 +236,6 @@ const ManageJobPosting: React.FC<ManageJobPostingProps> = ({
     setSelectedHiringStages(newStages);
   };
 
-  const handleMoveHiringStage = (fromIndex: number, toIndex: number) => {
-    const newStages = [...selectedHiringStages];
-    const [moved] = newStages.splice(fromIndex, 1);
-    newStages.splice(toIndex, 0, moved);
-    setSelectedHiringStages(
-      newStages.map((hs, i) => ({ ...hs, sequence: i + 1 }))
-    );
-  };
-
   const handleAddAttachment = (attachmentId: number) => {
     const attachment = mockAttachmentTypes.find(a => a.id === attachmentId);
     if (attachment) {
@@ -268,15 +256,6 @@ const ManageJobPosting: React.FC<ManageJobPostingProps> = ({
       .filter((_, i) => i !== index)
       .map((at, i) => ({ ...at, sequence: i + 1 }));
     setSelectedAttachments(newAttachments);
-  };
-
-  const handleMoveAttachment = (fromIndex: number, toIndex: number) => {
-    const newAttachments = [...selectedAttachments];
-    const [moved] = newAttachments.splice(fromIndex, 1);
-    newAttachments.splice(toIndex, 0, moved);
-    setSelectedAttachments(
-      newAttachments.map((at, i) => ({ ...at, sequence: i + 1 }))
-    );
   };
 
   return (

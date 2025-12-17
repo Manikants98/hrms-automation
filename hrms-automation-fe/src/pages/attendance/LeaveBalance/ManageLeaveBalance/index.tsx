@@ -1,5 +1,5 @@
 import { Add, Delete } from '@mui/icons-material';
-import { Box, IconButton, MenuItem, Typography } from '@mui/material';
+import { Box, MenuItem, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import {
   useCreateLeaveBalance,

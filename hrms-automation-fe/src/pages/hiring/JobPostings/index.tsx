@@ -6,7 +6,6 @@ import {
   FormControl,
   MenuItem,
   Select as MuiSelect,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import {

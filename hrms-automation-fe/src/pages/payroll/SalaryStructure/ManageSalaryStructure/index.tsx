@@ -173,16 +173,6 @@ const ManageSalaryStructure: React.FC<ManageSalaryStructureProps> = ({
     formik.setFieldValue('structure_items', items);
   };
 
-  const calculateNetSalary = () => {
-    const earnings = formik.values.structure_items
-      .filter(item => item.category === 'Earnings')
-      .reduce((sum, item) => sum + (item.value || 0), 0);
-    const deductions = formik.values.structure_items
-      .filter(item => item.category === 'Deductions')
-      .reduce((sum, item) => sum + (item.value || 0), 0);
-    return earnings - deductions;
-  };
-
   const structureItemColumns: TableColumn<
     SalaryStructureItem & { index: number }
   >[] = [

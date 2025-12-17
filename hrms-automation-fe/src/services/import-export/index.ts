@@ -1,202 +1,148 @@
-/**
- * @fileoverview Import/Export Service
- * @description API service for import/export operations
- * @author DCC-SFA Team
- * @version 1.0.0
- */
+import axiosInstance from '../../configs/axio.config';
 
-import api from 'configs/axio.config';
-import type { ApiResponse } from 'types/api.types';
-
-interface SupportedTable {
+export interface SupportedTable {
   name: string;
   displayName: string;
   count: number;
   columns: number;
 }
 
-interface ImportPreview {
-  totalRows: number;
-  validRows: number;
-  invalidRows: number;
+export interface ImportPreview {
+  data: any[];
   errors: Array<{
     row: number;
     column: string;
     message: string;
-    value: any;
   }>;
-  preview: any[];
-  fileInfo: {
+  validCount: number;
+  totalCount: number;
+  fileInfo?: {
     originalName: string;
     size: number;
     mimetype: string;
   };
-  columns: Array<{
-    key: string;
-    header: string;
+  columns?: Array<{
+    name: string;
+    label: string;
     type: string;
-    required: boolean;
   }>;
 }
 
-interface ImportResult {
+export interface ImportResult {
   success: number;
   failed: number;
-  errors: string[];
-  data: any[];
-  totalProcessed: number;
-  fileInfo: {
+  skipped: number;
+  totalProcessed?: number;
+  errors?: Array<{
+    row: number;
+    message: string;
+  }>;
+  fileInfo?: {
     originalName: string;
     rows: number;
   };
 }
 
-interface ImportOptions {
+export interface ImportOptions {
   batchSize?: number;
   skipDuplicates?: boolean;
   updateExisting?: boolean;
 }
 
-/**
- * Get supported tables for import/export
- */
-export const getSupportedTables = async (): Promise<
-  ApiResponse<{
-    tables: string[];
-    details: SupportedTable[];
-  }>
-> => {
-  try {
-    const response = await api.get('/import-export/tables');
-    return response.data;
-  } catch (error: any) {
-    console.error('Error fetching supported tables:', error);
-    throw new Error(
-      error.response?.data?.message || 'Failed to fetch supported tables'
-    );
-  }
+export const getSupportedTables = async (): Promise<SupportedTable[]> => {
+  const response = await axiosInstance.get('/v1/import-export/tables');
+  return response.data.data.details || [];
 };
 
-/**
- * Download template for a specific table
- */
 export const downloadTemplate = async (tableName: string): Promise<Blob> => {
-  try {
-    const response = await api.get(`/import-export/${tableName}/template`, {
+  const response = await axiosInstance.get(
+    `/v1/import-export/${tableName}/template`,
+    {
       responseType: 'blob',
-    });
-    return response.data;
-  } catch (error: any) {
-    console.error('Error downloading template:', error);
-    throw new Error(
-      error.response?.data?.message || 'Failed to download template'
-    );
-  }
+    }
+  );
+  return response.data;
 };
 
-/**
- * Preview import data before actual import
- */
 export const previewImport = async (
   tableName: string,
   file: File
-): Promise<ApiResponse<ImportPreview>> => {
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
+): Promise<ImportPreview> => {
+  const formData = new FormData();
+  formData.append('file', file);
 
-    const response = await api.post(
-      `/import-export/${tableName}/preview`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
-    return response.data;
-  } catch (error: any) {
-    console.error('Error previewing import:', error);
-    throw new Error(
-      error.response?.data?.message || 'Failed to preview import'
-    );
-  }
+  const response = await axiosInstance.post(
+    `/v1/import-export/${tableName}/import`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      params: {
+        preview: true,
+      },
+    }
+  );
+
+  return response.data.data;
 };
 
-/**
- * Import data from file
- */
 export const importData = async (
   tableName: string,
   file: File,
-  options: ImportOptions = {}
-): Promise<ApiResponse<ImportResult>> => {
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    // Add options to form data
-    if (options.batchSize)
+  options?: ImportOptions
+): Promise<ImportResult> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  if (options) {
+    if (options.batchSize) {
       formData.append('batchSize', options.batchSize.toString());
-    if (options.skipDuplicates !== undefined)
+    }
+    if (options.skipDuplicates !== undefined) {
       formData.append('skipDuplicates', options.skipDuplicates.toString());
-    if (options.updateExisting !== undefined)
+    }
+    if (options.updateExisting !== undefined) {
       formData.append('updateExisting', options.updateExisting.toString());
-
-    const response = await api.post(
-      `/import-export/${tableName}/import`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
-    return response.data;
-  } catch (error: any) {
-    console.error('Error importing data:', error);
-    throw new Error(error.response?.data?.message || 'Failed to import data');
+    }
   }
+
+  const response = await axiosInstance.post(
+    `/v1/import-export/${tableName}/import`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
+
+  return response.data.data;
 };
 
-/**
- * Export data to Excel
- */
 export const exportToExcel = async (
   tableName: string,
   filters?: Record<string, any>
 ): Promise<Blob> => {
-  try {
-    const response = await api.get(`/import-export/${tableName}/export/excel`, {
+  const response = await axiosInstance.get(
+    `/v1/import-export/${tableName}/export/excel`,
+    {
       params: filters,
       responseType: 'blob',
-    });
-    return response.data;
-  } catch (error: any) {
-    console.error('Error exporting to Excel:', error);
-    throw new Error(
-      error.response?.data?.message || 'Failed to export to Excel'
-    );
-  }
+    }
+  );
+  return response.data;
 };
 
-/**
- * Export data to PDF
- */
 export const exportToPDF = async (
   tableName: string,
   filters?: Record<string, any>
 ): Promise<Blob> => {
-  try {
-    const response = await api.get(`/import-export/${tableName}/export/pdf`, {
+  const response = await axiosInstance.get(
+    `/v1/import-export/${tableName}/export/pdf`,
+    {
       params: filters,
       responseType: 'blob',
-    });
-    return response.data;
-  } catch (error: any) {
-    console.error('Error exporting to PDF:', error);
-    throw new Error(error.response?.data?.message || 'Failed to export to PDF');
-  }
+    }
+  );
+  return response.data;
 };
-
-export type { SupportedTable, ImportPreview, ImportResult, ImportOptions };

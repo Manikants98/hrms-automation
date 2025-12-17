@@ -3,7 +3,6 @@ import {
   CircularProgress,
   TextField,
   Box,
-  Typography,
   Avatar,
 } from '@mui/material';
 import type { FormikProps } from 'formik';

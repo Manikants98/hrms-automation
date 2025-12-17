@@ -1,12 +1,6 @@
-import {
-  AccountCircle,
-  Assignment,
-  Logout,
-  Settings,
-} from '@mui/icons-material';
+import { AccountCircle, Logout, Settings } from '@mui/icons-material';
 import {
   Avatar,
-  Badge,
   Box,
   Divider,
   IconButton,
@@ -21,9 +15,6 @@ import React, { useState } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useRequestsByUsersWithoutPermission } from '../../hooks/useRequests';
-import ApprovalsSidebar from '../ApprovalsSidebar';
-import Notifications from '../Notifications';
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -32,7 +23,6 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleSidebar }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [approvalsDrawerOpen, setApprovalsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
 
@@ -42,22 +32,6 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleSidebar }) => {
     logout,
     isLoggingOut,
   } = useAuth();
-
-  // Fetch pending approvals for badge count
-  const { data: pendingRequestsResponse } = useRequestsByUsersWithoutPermission(
-    {
-      page: 1,
-      limit: 100,
-      status: 'P', // Only pending requests
-    },
-    {
-      retry: false, // Don't retry if it fails (especially 403)
-      refetchOnMount: false, // Don't refetch on mount
-      refetchOnWindowFocus: false, // Don't refetch on window focus
-    }
-  );
-
-  const pendingCount = pendingRequestsResponse?.pagination?.total_count || 0;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -113,32 +87,6 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleSidebar }) => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge
-            badgeContent={pendingCount}
-            color="error"
-            max={99}
-            invisible={pendingCount === 0}
-          >
-            <IconButton
-              onClick={() => setApprovalsDrawerOpen(true)}
-              className="!p-1.5 !rounded-md !bg-gray-100 !text-gray-600 hover:!text-gray-900 hover:!bg-gray-100"
-              aria-label="approvals"
-              aria-controls={
-                approvalsDrawerOpen ? 'approvals-drawer' : undefined
-              }
-              aria-haspopup="true"
-              aria-expanded={approvalsDrawerOpen ? 'true' : undefined}
-            >
-              <Assignment className="!text-gray-600" />
-            </IconButton>
-          </Badge>
-
-          <Notifications
-            onNotificationClick={notification => {
-              console.log('Notification clicked:', notification);
-            }}
-          />
-
           <div className="relative">
             <IconButton
               onClick={handleClick}
@@ -339,10 +287,6 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleSidebar }) => {
           </div>
         </div>
       </div>
-      <ApprovalsSidebar
-        open={approvalsDrawerOpen}
-        setOpen={setApprovalsDrawerOpen}
-      />
     </header>
   );
 };

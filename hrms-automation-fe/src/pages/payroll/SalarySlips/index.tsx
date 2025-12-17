@@ -33,7 +33,7 @@ const SalarySlipsPage: React.FC = () => {
     useState<SalarySlip | null>(null);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const { isCreate, isUpdate, isDelete, isRead } = usePermission('user' as any);
+  const { isCreate, isUpdate, isRead } = usePermission('user' as any);
 
   const {
     data: salarySlipsResponse,

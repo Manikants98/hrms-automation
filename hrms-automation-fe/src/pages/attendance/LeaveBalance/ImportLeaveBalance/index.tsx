@@ -277,13 +277,13 @@ const ImportLeaveBalance: React.FC<ImportLeaveBalanceProps> = ({
                           <Box className="!bg-red-50 !rounded-lg !max-h-32 !overflow-y-auto !p-2">
                             {importResults.errors
                               .slice(0, 10)
-                              .map((error: string, index: number) => (
+                              .map((error, index: number) => (
                                 <Typography
                                   key={index}
                                   variant="body2"
                                   className="!text-red-600 !mb-1"
                                 >
-                                  • {error}
+                                  • Row {error.row}: {error.message}
                                 </Typography>
                               ))}
                             {importResults.errors.length > 10 && (

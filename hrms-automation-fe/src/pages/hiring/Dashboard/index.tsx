@@ -28,7 +28,7 @@ import {
 import React, { useMemo } from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import StatsCard from 'shared/StatsCard';
-import Table, { type TableColumn } from 'shared/Table';
+import Table from 'shared/Table';
 import { formatDate } from 'utils/dateUtils';
 import type { Candidate } from 'hooks/useCandidates';
 import type { JobPosting } from 'hooks/useJobPostings';
@@ -153,31 +153,6 @@ const HiringDashboard: React.FC = () => {
       ],
     };
   }, [stats.candidatesByStatus]);
-
-  const stageChartData = useMemo(() => {
-    const labels = Object.keys(stats.candidatesByStage);
-    const data = Object.values(stats.candidatesByStage);
-
-    return {
-      labels,
-      datasets: [
-        {
-          label: 'Candidates by Stage',
-          data,
-          backgroundColor: [
-            '#3b82f6',
-            '#10b981',
-            '#f59e0b',
-            '#8b5cf6',
-            '#ef4444',
-            '#6b7280',
-          ],
-          borderColor: '#ffffff',
-          borderWidth: 2,
-        },
-      ],
-    };
-  }, [stats.candidatesByStage]);
 
   const pipelineChartData = useMemo(() => {
     const stages = hiringStages.map(stage => stage.name);
