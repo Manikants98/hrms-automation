@@ -28,7 +28,8 @@ import {
  * @description Can be overridden via environment variables
  */
 
-const BASE_URL = import.meta.env?.VITE_API_BASE_URL;
+const BASE_URL =
+  import.meta.env?.VITE_API_BASE_URL || 'https://hrms-automation.onrender.com';
 
 /**
  * Request timeout in milliseconds
