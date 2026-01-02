@@ -5,6 +5,12 @@ import { attendanceController } from '../controllers/attendance.controller';
 
 const router = Router();
 
+router.get(
+  '/attendance',
+  authenticateToken,
+  attendanceController.getAllAttendance
+);
+
 router.post(
   '/attendance/punch',
   authenticateToken,

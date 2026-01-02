@@ -94,8 +94,9 @@ export const authenticateToken = async (req: any, res: any, next: any) => {
         .filter(rp => rp.is_active === 'Y' && rp.permission?.is_active === 'Y')
         .map(rp => rp.permission!.name),
       parent_id: user.parent_id,
-      depot_id: user.depot_id,
-      zone_id: user.zone_id,
+      department_id: user.department_id,
+      designation_id: user.designation_id,
+      shift_id: user.shift_id,
     };
 
     req.token = token;
@@ -210,8 +211,9 @@ export const authenticateApiToken = async (req: any, res: any, next: any) => {
         .filter(rp => rp.is_active === 'Y' && rp.permission?.is_active === 'Y')
         .map(rp => rp.permission!.name),
       parent_id: user.parent_id,
-      depot_id: user.depot_id,
-      zone_id: user.zone_id,
+      department_id: user.department_id,
+      designation_id: user.designation_id,
+      shift_id: user.shift_id,
     };
 
     req.token = token;

@@ -31,7 +31,22 @@ import StatsCard from 'shared/StatsCard';
 import Table from 'shared/Table';
 import { formatDate } from 'utils/dateUtils';
 import type { Candidate } from 'hooks/useCandidates';
+import type { HiringStage } from 'hooks/useHiringStages';
 import type { JobPosting } from 'hooks/useJobPostings';
+
+const normalizeArray = <T,>(value: unknown): T[] => {
+  if (Array.isArray(value)) return value as T[];
+
+  if (value && typeof value === 'object') {
+    const v = value as any;
+    if (Array.isArray(v.data)) return v.data as T[];
+    if (Array.isArray(v.items)) return v.items as T[];
+    if (Array.isArray(v.rows)) return v.rows as T[];
+    if (Array.isArray(v.result)) return v.result as T[];
+  }
+
+  return [];
+};
 
 ChartJS.register(
   CategoryScale,
@@ -54,9 +69,9 @@ const HiringDashboard: React.FC = () => {
   const { data: candidatesResponse, isLoading: candidatesLoading } =
     useCandidates({ isActive: 'Y' });
 
-  const hiringStages = hiringStagesResponse?.data || [];
-  const jobPostings = jobPostingsResponse?.data || [];
-  const candidates = candidatesResponse?.data || [];
+  const hiringStages = normalizeArray<HiringStage>(hiringStagesResponse?.data);
+  const jobPostings = normalizeArray<JobPosting>(jobPostingsResponse?.data);
+  const candidates = normalizeArray<Candidate>(candidatesResponse?.data);
 
   const stats = useMemo(() => {
     const totalHiringStages = hiringStages.length;

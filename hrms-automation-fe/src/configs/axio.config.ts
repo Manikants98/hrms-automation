@@ -85,24 +85,44 @@ axiosInstance.interceptors.request.use(
 
           const user = tokenService.getUser();
           if (user) {
-            if (typeof config.headers.set === 'function') {
-              config.headers.set('X-User-ID', user.id.toString());
-              config.headers.set('X-User-Role', user.role);
-              if (user.depot_id) {
-                config.headers.set('X-Depot-ID', user.depot_id.toString());
-              }
-              if (user.zone_id) {
-                config.headers.set('X-Zone-ID', user.zone_id.toString());
+            if (user.id && typeof user.id === 'number' && !isNaN(user.id)) {
+              if (typeof config.headers.set === 'function') {
+                config.headers.set('X-User-ID', user.id.toString());
+                config.headers.set('X-User-Role', user.role);
+                if (
+                  user.depot_id &&
+                  typeof user.depot_id === 'number' &&
+                  !isNaN(user.depot_id)
+                ) {
+                  config.headers.set('X-Depot-ID', user.depot_id.toString());
+                }
+                if (
+                  user.zone_id &&
+                  typeof user.zone_id === 'number' &&
+                  !isNaN(user.zone_id)
+                ) {
+                  config.headers.set('X-Zone-ID', user.zone_id.toString());
+                }
+              } else {
+                config.headers['X-User-ID'] = user.id.toString();
+                config.headers['X-User-Role'] = user.role;
+                if (
+                  user.depot_id &&
+                  typeof user.depot_id === 'number' &&
+                  !isNaN(user.depot_id)
+                ) {
+                  config.headers['X-Depot-ID'] = user.depot_id.toString();
+                }
+                if (
+                  user.zone_id &&
+                  typeof user.zone_id === 'number' &&
+                  !isNaN(user.zone_id)
+                ) {
+                  config.headers['X-Zone-ID'] = user.zone_id.toString();
+                }
               }
             } else {
-              config.headers['X-User-ID'] = user.id.toString();
-              config.headers['X-User-Role'] = user.role;
-              if (user.depot_id) {
-                config.headers['X-Depot-ID'] = user.depot_id.toString();
-              }
-              if (user.zone_id) {
-                config.headers['X-Zone-ID'] = user.zone_id.toString();
-              }
+              console.error('Invalid user ID format:', user.id);
             }
           }
 

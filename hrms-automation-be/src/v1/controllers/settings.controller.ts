@@ -51,7 +51,7 @@ export const settingsController = {
     try {
       const firstCompany = await prisma.companies.findFirst({
         orderBy: { id: 'asc' },
-        include: { depot_companies: true, users: true },
+        include: { users: true },
       });
 
       if (!firstCompany) {
@@ -172,7 +172,7 @@ export const settingsController = {
       const company = await prisma.companies.update({
         where: { id: Number(id) },
         data,
-        include: { depot_companies: true, users: true },
+        include: { users: true },
       });
 
       if (req.file && existingCompany.logo) {

@@ -9,6 +9,8 @@ import {
   type LeaveType,
 } from 'hooks/useLeaveApplications';
 import { useLeaveBalances } from 'hooks/useLeaveBalances';
+import type { Employee } from 'hooks/useEmployees';
+import type { LeaveBalance } from 'hooks/useLeaveBalances';
 import {
   Calendar,
   CheckCircle,
@@ -28,6 +30,20 @@ import Select from 'shared/Select';
 import StatsCard from 'shared/StatsCard';
 import Table, { type TableColumn } from 'shared/Table';
 import { formatDate } from 'utils/dateUtils';
+
+const normalizeArray = <T,>(value: unknown): T[] => {
+  if (Array.isArray(value)) return value as T[];
+
+  if (value && typeof value === 'object') {
+    const v = value as any;
+    if (Array.isArray(v.data)) return v.data as T[];
+    if (Array.isArray(v.items)) return v.items as T[];
+    if (Array.isArray(v.rows)) return v.rows as T[];
+    if (Array.isArray(v.result)) return v.result as T[];
+  }
+
+  return [];
+};
 
 const LeaveReports: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -54,13 +70,13 @@ const LeaveReports: React.FC = () => {
     isLoading: leaveApplicationsLoading,
   } = useLeaveApplications({
     search,
-    approvalStatus:
+    approval_status:
       statusFilter !== 'all' ? (statusFilter as ApprovalStatus) : undefined,
-    leaveType:
-      leaveTypeFilter !== 'all' ? (leaveTypeFilter as LeaveType) : undefined,
-    employeeId: employeeFilter,
-    startDate: dateFrom || undefined,
-    endDate: dateTo || undefined,
+    leave_type_id:
+      leaveTypeFilter !== 'all' ? parseInt(leaveTypeFilter as string) : undefined,
+    employee_id: employeeFilter,
+    start_date: dateFrom || undefined,
+    end_date: dateTo || undefined,
     limit: 1000,
   });
 
@@ -69,9 +85,9 @@ const LeaveReports: React.FC = () => {
       limit: 1000,
     });
 
-  const employees = employeesResponse?.data || [];
-  const leaveApplications = leaveApplicationsResponse?.data || [];
-  const leaveBalances = leaveBalancesResponse?.data || [];
+  const employees = normalizeArray<Employee>(employeesResponse?.data);
+  const leaveApplications = normalizeArray<LeaveApplication>(leaveApplicationsResponse?.data);
+  const leaveBalances = normalizeArray<LeaveBalance>(leaveBalancesResponse?.data);
 
   const filteredLeaveApplications = useMemo(() => {
     let filtered = [...leaveApplications];
@@ -128,7 +144,7 @@ const LeaveReports: React.FC = () => {
 
     const applicationsByLeaveType = filteredLeaveApplications.reduce(
       (acc, app) => {
-        acc[app.leave_type] = (acc[app.leave_type] || 0) + 1;
+        acc[app.leave_type_name || 'Unknown'] = (acc[app.leave_type_name || 'Unknown'] || 0) + 1;
         return acc;
       },
       {} as Record<string, number>
@@ -155,8 +171,8 @@ const LeaveReports: React.FC = () => {
     const totalAllocated = leaveBalances.reduce((sum, balance) => {
       return (
         sum +
-        balance.leave_type_items.reduce(
-          (itemSum, item) => itemSum + item.total_allocated,
+        (balance.leave_type_items || []).reduce(
+          (itemSum, item) => itemSum + (item.total_allocated || 0),
           0
         )
       );
@@ -165,8 +181,8 @@ const LeaveReports: React.FC = () => {
     const totalUsed = leaveBalances.reduce((sum, balance) => {
       return (
         sum +
-        balance.leave_type_items.reduce(
-          (itemSum, item) => itemSum + item.used,
+        (balance.leave_type_items || []).reduce(
+          (itemSum, item) => itemSum + (item.used || 0),
           0
         )
       );
@@ -175,8 +191,8 @@ const LeaveReports: React.FC = () => {
     const totalBalance = leaveBalances.reduce((sum, balance) => {
       return (
         sum +
-        balance.leave_type_items.reduce(
-          (itemSum, item) => itemSum + item.leave_balance,
+        (balance.leave_type_items || []).reduce(
+          (itemSum, item) => itemSum + (item.balance || 0),
           0
         )
       );
@@ -297,7 +313,7 @@ const LeaveReports: React.FC = () => {
       label: 'Leave Type',
       render: (_value, row) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.leave_type}
+          {row.leave_type_name}
         </Typography>
       ),
     },

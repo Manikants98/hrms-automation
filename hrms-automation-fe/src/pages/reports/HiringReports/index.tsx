@@ -59,9 +59,9 @@ const HiringReports: React.FC = () => {
     limit: 1000,
   });
 
-  const candidates = candidatesResponse?.data || [];
-  const jobPostings = jobPostingsResponse?.data || [];
-  const hiringStages = hiringStagesResponse?.data || [];
+  const candidates = Array.isArray(candidatesResponse?.data) ? candidatesResponse.data : [];
+  const jobPostings = Array.isArray(jobPostingsResponse?.data) ? jobPostingsResponse.data : [];
+  const hiringStages = Array.isArray(hiringStagesResponse?.data) ? hiringStagesResponse.data : [];
 
   const filteredCandidates = useMemo(() => {
     let filtered = [...candidates];

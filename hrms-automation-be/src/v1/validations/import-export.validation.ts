@@ -1,6 +1,5 @@
 import { body, param, query, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
-import { ImportExportFactory } from '../services//import-export-factory.service';
 
 export const handleValidationErrors = (
   req: Request,
@@ -29,16 +28,7 @@ export const validateTableParam = [
       'Table name must contain only lowercase letters and underscores'
     )
     .isLength({ max: 50 })
-    .withMessage('Table name must not exceed 50 characters')
-    .custom(value => {
-      const supportedTables = ImportExportFactory.getSupportedTables();
-      if (!supportedTables.includes(value)) {
-        throw new Error(
-          `Table '${value}' is not supported. Supported tables: ${supportedTables.join(', ')}`
-        );
-      }
-      return true;
-    }),
+    .withMessage('Table name must not exceed 50 characters'),
 ];
 
 export const validateExportQuery = [

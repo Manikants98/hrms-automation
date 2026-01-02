@@ -107,8 +107,8 @@ const HRDashboard: React.FC = () => {
     const totalEmployees = employees.length;
     const activeEmployees = employees.filter(e => e.is_active === 'Y').length;
     const newEmployeesThisMonth = employees.filter(emp => {
-      if (!emp.joining_date) return false;
-      const joiningDate = dayjs(emp.joining_date);
+      if (!emp.date_of_joining) return false;
+      const joiningDate = dayjs(emp.date_of_joining);
       const now = dayjs();
       return (
         joiningDate.month() === now.month() && joiningDate.year() === now.year()
@@ -822,7 +822,7 @@ const HRDashboard: React.FC = () => {
               label: 'Leave Type',
               render: (_value, row: LeaveApplication) => (
                 <Typography variant="body2" className="!text-gray-900">
-                  {row.leave_type}
+                  {row.leave_type_name || 'N/A'}
                 </Typography>
               ),
             },

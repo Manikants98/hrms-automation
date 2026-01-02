@@ -40,6 +40,7 @@ const ManageHiringStage: React.FC<ManageHiringStageProps> = ({
       name: selectedHiringStage?.name || '',
       code: selectedHiringStage?.code || '',
       description: selectedHiringStage?.description || '',
+      sequence_order: selectedHiringStage?.sequence_order || 0,
       is_active: selectedHiringStage?.is_active || 'Y',
     },
     validationSchema: hiringStageValidationSchema,
@@ -50,6 +51,7 @@ const ManageHiringStage: React.FC<ManageHiringStageProps> = ({
           name: values.name,
           code: values.code.toUpperCase().replace(/\s+/g, '_'),
           description: values.description || undefined,
+          sequence_order: values.sequence_order,
           is_active: values.is_active,
         };
 
@@ -91,6 +93,15 @@ const ManageHiringStage: React.FC<ManageHiringStageProps> = ({
               name="code"
               label="Code"
               placeholder="Enter code (e.g., APP_REC)"
+              formik={formik}
+              required
+            />
+
+            <Input
+              name="sequence_order"
+              label="Sequence Order"
+              type="number"
+              placeholder="Enter sequence order"
               formik={formik}
               required
             />

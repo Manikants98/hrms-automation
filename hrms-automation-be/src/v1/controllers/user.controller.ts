@@ -13,8 +13,11 @@ const serializeUser = (
   name: user.name,
   role_id: Number(user.role_id),
   parent_id: user.parent_id,
-  depot_id: user.depot_id,
-  zone_id: user.zone_id,
+  department_id: user.department_id,
+  designation_id: user.designation_id,
+  shift_id: user.shift_id,
+  salary: user.salary,
+  currency_code: user.currency_code,
   phone_number: user.phone_number,
   address: user.address,
   employee_id: user.employee_id,
@@ -39,19 +42,25 @@ const serializeUser = (
         code: user.companies.code,
       }
     : null,
-  user_depot: user.user_depot
+  department: user.employees_department
     ? {
-        id: user.user_depot.id,
-        name: user.user_depot.name,
-        code: user.user_depot.code,
+        id: user.employees_department.id,
+        name: user.employees_department.name,
+        code: user.employees_department.code,
       }
     : null,
-
-  user_zones: user.zones
+  designation: user.employees_designation
     ? {
-        id: user.zones.id,
-        name: user.zones.name,
-        code: user.zones.code,
+        id: user.employees_designation.id,
+        name: user.employees_designation.name,
+        code: user.employees_designation.code,
+      }
+    : null,
+  shift: user.employees_shift
+    ? {
+        id: user.employees_shift.id,
+        name: user.employees_shift.name,
+        code: user.employees_shift.code,
       }
     : null,
   reporting_manager: user.users
@@ -85,8 +94,11 @@ export const userController = {
         name,
         role_id,
         parent_id,
-        depot_id,
-        zone_id,
+        department_id,
+        designation_id,
+        shift_id,
+        salary,
+        currency_code,
         phone_number,
         address,
         employee_id,
@@ -150,8 +162,11 @@ export const userController = {
           name,
           role_id: Number(role_id),
           parent_id,
-          depot_id,
-          zone_id,
+          department_id,
+          designation_id,
+          shift_id,
+          salary,
+          currency_code,
           phone_number,
           address,
           employee_id,
@@ -166,8 +181,9 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
-          user_depot: true,
-          user_zones: true,
+          employees_department: { select: { id: true, name: true, code: true } },
+          employees_designation: { select: { id: true, name: true, code: true } },
+          employees_shift: { select: { id: true, name: true, code: true } },
           users: { select: { id: true, name: true, email: true } },
         },
       });
@@ -187,8 +203,9 @@ export const userController = {
         search = '',
         isActive,
         role_id,
-        depot_id,
-        zone_id,
+        department_id,
+        designation_id,
+        shift_id,
       } = req.query;
 
       const page_num = parseInt(page as string, 10);
@@ -217,8 +234,9 @@ export const userController = {
           ],
         }),
         ...(role_id && { role_id: Number(role_id) }),
-        ...(depot_id && { depot_id: Number(depot_id) }),
-        ...(zone_id && { zone_id: Number(zone_id) }),
+        ...(department_id && { department_id: Number(department_id) }),
+        ...(designation_id && { designation_id: Number(designation_id) }),
+        ...(shift_id && { shift_id: Number(shift_id) }),
       };
 
       const { data, pagination } = await paginate({
@@ -230,8 +248,6 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
-          user_depot: true,
-          user_zones: true,
           users: {
             select: {
               id: true,
@@ -294,8 +310,6 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
-          user_depot: true,
-          user_zones: true,
           users: {
             select: {
               id: true,
@@ -452,8 +466,9 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
-          user_depot: true,
-          user_zones: true,
+          employees_department: { select: { id: true, name: true, code: true } },
+          employees_designation: { select: { id: true, name: true, code: true } },
+          employees_shift: { select: { id: true, name: true, code: true } },
           users: { select: { id: true, name: true, email: true } },
         },
       });
@@ -505,8 +520,6 @@ export const userController = {
             },
           },
           companies: true,
-          user_depot: true,
-          user_zones: true,
           users: {
             select: {
               id: true,
@@ -626,8 +639,9 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
-          user_depot: true,
-          user_zones: true,
+          employees_department: { select: { id: true, name: true, code: true } },
+          employees_designation: { select: { id: true, name: true, code: true } },
+          employees_shift: { select: { id: true, name: true, code: true } },
           users: { select: { id: true, name: true, email: true } },
         },
       });

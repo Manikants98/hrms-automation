@@ -12,7 +12,6 @@ import Button from 'shared/Button';
 import CustomDrawer from 'shared/Drawer';
 import Input from 'shared/Input';
 import Select from 'shared/Select';
-import UserSelect from 'shared/UserSelect';
 
 interface ManageEmployeeProps {
   selectedEmployee?: Employee | null;
@@ -72,15 +71,15 @@ const ManageEmployee: React.FC<ManageEmployeeProps> = ({
       email: selectedEmployee?.email || '',
       phone_number: selectedEmployee?.phone_number || '',
       employee_id: selectedEmployee?.employee_id || '',
+      role_id: selectedEmployee?.role_id || '',
       department_id: selectedEmployee?.department_id || '',
       designation_id: selectedEmployee?.designation_id || '',
       shift_id: selectedEmployee?.shift_id || '',
-      reporting_manager_id: selectedEmployee?.reporting_manager_id || '',
-      joining_date: selectedEmployee?.joining_date || '',
+      date_of_joining: selectedEmployee?.date_of_joining || '',
       address: selectedEmployee?.address || '',
       profile_image: selectedEmployee?.profile_image || '',
       salary: selectedEmployee?.salary || '',
-      currency_code: selectedEmployee?.currency_code || 'USD',
+      status: selectedEmployee?.status || 'Active',
       is_active: selectedEmployee?.is_active || 'Y',
     },
     validationSchema: employeeValidationSchema,
@@ -92,6 +91,7 @@ const ManageEmployee: React.FC<ManageEmployeeProps> = ({
           email: values.email,
           phone_number: values.phone_number || undefined,
           employee_id: values.employee_id || undefined,
+          role_id: Number(values.role_id),
           department_id: values.department_id
             ? Number(values.department_id)
             : undefined,
@@ -99,14 +99,11 @@ const ManageEmployee: React.FC<ManageEmployeeProps> = ({
             ? Number(values.designation_id)
             : undefined,
           shift_id: values.shift_id ? Number(values.shift_id) : undefined,
-          reporting_manager_id: values.reporting_manager_id
-            ? Number(values.reporting_manager_id)
-            : undefined,
-          joining_date: values.joining_date || undefined,
+          date_of_joining: values.date_of_joining || undefined,
           address: values.address || undefined,
           profile_image: values.profile_image || undefined,
           salary: values.salary ? Number(values.salary) : undefined,
-          currency_code: values.currency_code || undefined,
+          status: values.status as Employee['status'],
           is_active: values.is_active as 'Y' | 'N',
         };
 
@@ -222,15 +219,12 @@ const ManageEmployee: React.FC<ManageEmployeeProps> = ({
                   ))}
                 </Select>
 
-                <UserSelect
-                  name="reporting_manager_id"
-                  label="Reporting Manager"
-                  formik={formik}
-                  nameToSearch={selectedEmployee?.reporting_manager_name || ''}
-                />
+                <Select name="role_id" label="Role" formik={formik} required>
+                  <MenuItem value="">-- Select --</MenuItem>
+                </Select>
 
                 <Input
-                  name="joining_date"
+                  name="date_of_joining"
                   label="Joining Date"
                   type="date"
                   formik={formik}
@@ -245,15 +239,11 @@ const ManageEmployee: React.FC<ManageEmployeeProps> = ({
                   formik={formik}
                 />
 
-                <Select
-                  name="currency_code"
-                  label="Currency Code"
-                  formik={formik}
-                >
-                  <MenuItem value="USD">USD</MenuItem>
-                  <MenuItem value="EUR">EUR</MenuItem>
-                  <MenuItem value="GBP">GBP</MenuItem>
-                  <MenuItem value="INR">INR</MenuItem>
+                <Select name="status" label="Status" formik={formik} required>
+                  <MenuItem value="Active">Active</MenuItem>
+                  <MenuItem value="Inactive">Inactive</MenuItem>
+                  <MenuItem value="On Leave">On Leave</MenuItem>
+                  <MenuItem value="Terminated">Terminated</MenuItem>
                 </Select>
               </Box>
             </Box>

@@ -142,6 +142,7 @@ const ManageJobPosting: React.FC<ManageJobPostingProps> = ({
       closing_date: selectedJobPosting?.closing_date || '',
       is_internal_job: selectedJobPosting?.is_internal_job || 'N',
       description: selectedJobPosting?.description || '',
+      status: selectedJobPosting?.status || 'Draft',
       is_active: selectedJobPosting?.is_active || 'Y',
     },
     validationSchema: jobPostingValidationSchema,
@@ -168,7 +169,7 @@ const ManageJobPosting: React.FC<ManageJobPostingProps> = ({
             ? Number(values.designation_id)
             : undefined,
           experience: values.experience || undefined,
-          posting_date: values.posting_date || undefined,
+          posting_date: values.posting_date,
           closing_date: values.closing_date || undefined,
           is_internal_job: values.is_internal_job as 'Y' | 'N',
           hiring_stages: selectedHiringStages.map(hs => ({
@@ -180,6 +181,7 @@ const ManageJobPosting: React.FC<ManageJobPostingProps> = ({
             sequence: at.sequence,
           })),
           description: values.description || undefined,
+          status: values.status as JobPosting['status'],
           is_active: values.is_active as 'Y' | 'N',
         };
 
@@ -200,8 +202,8 @@ const ManageJobPosting: React.FC<ManageJobPostingProps> = ({
   });
 
   const availableHiringStagesForSelection = useMemo(() => {
-    const selectedIds = selectedHiringStages.map(hs => hs.hiring_stage_id);
-    return availableHiringStages.filter(
+    const selectedIds = selectedHiringStages?.map(hs => hs.hiring_stage_id);
+    return availableHiringStages?.filter(
       stage => !selectedIds.includes(stage.id)
     );
   }, [availableHiringStages, selectedHiringStages]);

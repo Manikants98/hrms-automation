@@ -20,42 +20,42 @@ router.use(authenticateToken);
 
 router.get(
   '/api-tokens',
-  requirePermission([{ module: 'token', action: 'read' }]),
+  requirePermission([{ module: 'api-token', action: 'read' }]),
   getApiTokens
 );
 router.get(
   '/api-tokens/:id',
-  requirePermission([{ module: 'token', action: 'read' }]),
+  requirePermission([{ module: 'api-token', action: 'read' }]),
   getApiTokenById
 );
 router.patch(
   '/api-tokens/:id/revoke',
   auditUpdate('api_tokens'),
-  requirePermission([{ module: 'token', action: 'update' }]),
+  requirePermission([{ module: 'api-token', action: 'update' }]),
   revokeApiToken
 );
 router.patch(
   '/api-tokens/:id/activate',
   auditUpdate('api_tokens'),
-  requirePermission([{ module: 'token', action: 'update' }]),
+  requirePermission([{ module: 'api-token', action: 'update' }]),
   activateApiToken
 );
 router.patch(
   '/api-tokens/:id/deactivate',
   auditUpdate('api_tokens'),
-  requirePermission([{ module: 'token', action: 'update' }]),
+  requirePermission([{ module: 'api-token', action: 'update' }]),
   deactivateApiToken
 );
 router.delete(
   '/api-tokens/:id',
   auditDelete('api_tokens'),
-  requirePermission([{ module: 'token', action: 'delete' }]),
+  requirePermission([{ module: 'api-token', action: 'delete' }]),
   deleteApiToken
 );
 router.patch(
   '/api-tokens/user/:userId/revoke-all',
   auditUpdate('api_tokens'),
-  requirePermission([{ module: 'token', action: 'update' }]),
+  requirePermission([{ module: 'api-token', action: 'update' }]),
   revokeAllUserTokens
 );
 

@@ -58,8 +58,8 @@ const AttendancePage: React.FC = () => {
     }
   );
 
-  const employees = employeesResponse?.data || [];
-  const attendanceRecords = attendanceResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data) ? employeesResponse.data : [];
+  const attendanceRecords = Array.isArray(attendanceResponse?.data) ? attendanceResponse.data : [];
 
   const exportToExcelMutation = useExportToExcel();
 

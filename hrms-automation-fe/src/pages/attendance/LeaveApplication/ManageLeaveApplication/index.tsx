@@ -1,4 +1,5 @@
 import { Box, MenuItem } from '@mui/material';
+import dayjs from 'dayjs';
 import { useFormik } from 'formik';
 import {
   useCreateLeaveApplication,
@@ -39,21 +40,29 @@ const ManageLeaveApplication: React.FC<ManageLeaveApplicationProps> = ({
   const formik = useFormik({
     initialValues: {
       employee_id: selectedLeaveApplication?.employee_id || 0,
-      leave_type: selectedLeaveApplication?.leave_type || 'Annual',
+      leave_type_id: selectedLeaveApplication?.leave_type_id || 0,
       start_date: selectedLeaveApplication?.start_date || '',
       end_date: selectedLeaveApplication?.end_date || '',
+      total_days: selectedLeaveApplication?.total_days || 0,
       reason: selectedLeaveApplication?.reason || '',
+      is_active: selectedLeaveApplication?.is_active || 'Y',
     },
     validationSchema: leaveApplicationValidationSchema,
     enableReinitialize: true,
     onSubmit: async values => {
       try {
+        const startDate = dayjs(values.start_date);
+        const endDate = dayjs(values.end_date);
+        const totalDays = endDate.diff(startDate, 'day') + 1;
+
         const leaveApplicationData = {
           employee_id: values.employee_id,
-          leave_type: values.leave_type,
+          leave_type_id: Number(values.leave_type_id),
           start_date: values.start_date,
           end_date: values.end_date,
+          total_days: totalDays,
           reason: values.reason,
+          is_active: values.is_active as 'Y' | 'N',
         };
 
         if (isEdit && selectedLeaveApplication) {

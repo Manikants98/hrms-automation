@@ -37,13 +37,6 @@ const serializeCompany = (
         email: u.email,
       }))
     : [],
-  depot_companies: company.depot_companies
-    ? company.depot_companies.map((d: any) => ({
-        id: d.id,
-        parent_id: d.parent_id,
-        name: d.name,
-      }))
-    : [],
 });
 
 export const companyController = {
@@ -117,7 +110,7 @@ export const companyController = {
           ...(smtp_username && { smtp_username }),
           ...(smtp_password && { smtp_password }),
         },
-        include: { users: true, depot_companies: true },
+        include: { users: true },
       });
 
       res.success(
@@ -210,7 +203,7 @@ export const companyController = {
       const { id } = req.params;
       const company = await prisma.companies.findUnique({
         where: { id: Number(id) },
-        include: { depot_companies: true, users: true },
+        include: { users: true },
       });
 
       if (!company) {
@@ -299,7 +292,7 @@ export const companyController = {
       const company = await prisma.companies.update({
         where: { id: Number(id) },
         data,
-        include: { depot_companies: true, users: true },
+        include: { users: true },
       });
 
       if (req.file && existingCompany.logo) {

@@ -17,8 +17,10 @@ import {
   useDeleteSalaryStructure,
   useSalaryStructures,
   type SalaryStructure,
-  type SalaryStructureStatus,
 } from 'hooks/useSalaryStructures';
+import type { SalaryStructure as SalaryStructureType } from 'services/salaryStructures';
+
+type SalaryStructureStatus = SalaryStructureType['status'];
 import { DollarSign, TrendingDown, TrendingUp, User } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { DeleteButton, EditButton } from 'shared/ActionButton';
@@ -68,8 +70,8 @@ const SalaryStructurePage: React.FC = () => {
     }
   );
 
-  const employees = employeesResponse?.data || [];
-  const salaryStructuresData = salaryStructuresResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data) ? employeesResponse.data : [];
+  const salaryStructuresData = Array.isArray(salaryStructuresResponse?.data) ? salaryStructuresResponse.data : [];
 
   const salaryStructureMap = React.useMemo(() => {
     const map = new Map<number, SalaryStructure>();
@@ -103,6 +105,7 @@ const SalaryStructurePage: React.FC = () => {
           structure_items: [],
           createdate: '',
           updatedate: '',
+          is_active: 'Y' as const,
         };
       })
       .filter(item => {

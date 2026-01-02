@@ -1,16 +1,6 @@
-/**
- * @fileoverview Permissions Seeder
- * @description Creates 11 sample permissions for testing and development
- * @author DCC-SFA Team
- * @version 1.0.0
- */
-
 import prisma from '../../configs/prisma.client';
+import logger from '../../configs/logger';
 
-/**
- * @interface MockPermission
- * @description Permission data structure for seeding
- */
 interface MockPermission {
   name: string;
   module: string;
@@ -19,390 +9,104 @@ interface MockPermission {
   is_active: string;
 }
 
-/**
- * @constant MODULE_MAPPING
- * @description Maps module keys to their display names for permission generation
- * @type {Record<string, string>}
- */
-const MODULE_MAPPING: Record<string, string> = {
-  dashboard: 'Dashboard',
-  company: 'Company Master',
-  user: 'User Management',
-  role: 'Role & Permission',
-  depot: 'Depot',
-  zone: 'Zone',
-  currency: 'Currency',
-  route: 'Route',
-  'route-type': 'Route Type',
-  outlet: 'Outlet Master',
-  'outlet-group': 'Outlet Group',
-  'asset-type': 'Asset Type',
-  'asset-master': 'Asset Master',
-  warehouse: 'Warehouse',
-  vehicle: 'Vehicle',
-  brand: 'Brand',
-  'product-category': 'Product Category',
-  'product-sub-category': 'Product Sub Category',
-  'unit-of-measurement': 'Unit Of Measurement',
-  product: 'Product',
-  pricelist: 'Price List',
-  'sales-target-group': 'Sales Target Group',
-  'sales-target': 'Sales Target',
-  'sales-bonus-rule': 'Sales Bonus Rule',
-  'kpi-target': 'KPI Target',
-  survey: 'Survey',
-  promotions: 'Promotions',
-  order: 'Order',
-  delivery: 'Delivery Schedule',
-  return: 'Return Request',
-  payment: 'Payment',
-  invoice: 'Invoice',
-  'credit-note': 'Credit Note',
-  visit: 'Visit',
-  'asset-movement': 'Asset Movement',
-  maintenance: 'Asset Maintenance',
-  installation: 'Cooler Installation',
-  inspection: 'Cooler Inspection',
-  'van-stock': 'Van Inventory',
-  'stock-movement': 'Stock Movement',
-  'stock-transfer': 'Stock Transfer Request',
-  competitor: 'Competitor Activity',
-  'customer-complaint': 'Customer Complaint',
-  'customer-category': 'Customer Category',
-  'customer-type': 'Customer Type',
-  'customer-channel': 'Customer Channel',
-  location: 'GPS Tracking',
-  'route-effectiveness': 'Route Effectiveness',
-  'erp-sync': 'ERP Sync',
-  report: 'Report',
-  approval: 'Approval Workflow',
-  exception: 'Exception',
-  alert: 'Alert',
-  profile: 'Profile',
-  'login-history': 'Login History',
-  token: 'Token',
-  setting: 'Setting',
-};
-
-/**
- * @constant MODULES
- * @description Array of all module keys extracted from MODULE_MAPPING
- * @type {string[]}
- */
-const MODULES: string[] = Object.keys(MODULE_MAPPING);
-
-/**
- * @constant ACTIONS
- * @description Available actions for permission generation
- * @type {Array<{key: string, name: string, description: string}>}
- */
-const ACTIONS = [
-  { key: 'read', name: 'READ', description: 'View and access data' },
-  { key: 'create', name: 'CREATE', description: 'Create new records' },
-  { key: 'update', name: 'UPDATE', description: 'Modify existing records' },
-  { key: 'delete', name: 'DELETE', description: 'Remove records' },
+const mockPermissions: MockPermission[] = [
+  { name: 'users.create', module: 'users', action: 'create', description: 'Create new users', is_active: 'Y' },
+  { name: 'users.read', module: 'users', action: 'read', description: 'View users', is_active: 'Y' },
+  { name: 'users.update', module: 'users', action: 'update', description: 'Update users', is_active: 'Y' },
+  { name: 'users.delete', module: 'users', action: 'delete', description: 'Delete users', is_active: 'Y' },
+  
+  { name: 'attendance.create', module: 'attendance', action: 'create', description: 'Create attendance records', is_active: 'Y' },
+  { name: 'attendance.read', module: 'attendance', action: 'read', description: 'View attendance records', is_active: 'Y' },
+  { name: 'attendance.update', module: 'attendance', action: 'update', description: 'Update attendance records', is_active: 'Y' },
+  { name: 'attendance.delete', module: 'attendance', action: 'delete', description: 'Delete attendance records', is_active: 'Y' },
+  
+  { name: 'leaves.create', module: 'leaves', action: 'create', description: 'Create leave applications', is_active: 'Y' },
+  { name: 'leaves.read', module: 'leaves', action: 'read', description: 'View leave applications', is_active: 'Y' },
+  { name: 'leaves.update', module: 'leaves', action: 'update', description: 'Update leave applications', is_active: 'Y' },
+  { name: 'leaves.delete', module: 'leaves', action: 'delete', description: 'Delete leave applications', is_active: 'Y' },
+  { name: 'leaves.approve', module: 'leaves', action: 'approve', description: 'Approve leave applications', is_active: 'Y' },
+  { name: 'leaves.reject', module: 'leaves', action: 'reject', description: 'Reject leave applications', is_active: 'Y' },
+  
+  { name: 'payroll.create', module: 'payroll', action: 'create', description: 'Create payroll records', is_active: 'Y' },
+  { name: 'payroll.read', module: 'payroll', action: 'read', description: 'View payroll records', is_active: 'Y' },
+  { name: 'payroll.update', module: 'payroll', action: 'update', description: 'Update payroll records', is_active: 'Y' },
+  { name: 'payroll.delete', module: 'payroll', action: 'delete', description: 'Delete payroll records', is_active: 'Y' },
+  { name: 'payroll.process', module: 'payroll', action: 'process', description: 'Process payroll', is_active: 'Y' },
+  
+  { name: 'recruitment.create', module: 'recruitment', action: 'create', description: 'Create job postings', is_active: 'Y' },
+  { name: 'recruitment.read', module: 'recruitment', action: 'read', description: 'View job postings', is_active: 'Y' },
+  { name: 'recruitment.update', module: 'recruitment', action: 'update', description: 'Update job postings', is_active: 'Y' },
+  { name: 'recruitment.delete', module: 'recruitment', action: 'delete', description: 'Delete job postings', is_active: 'Y' },
+  
+  { name: 'candidates.create', module: 'candidates', action: 'create', description: 'Create candidates', is_active: 'Y' },
+  { name: 'candidates.read', module: 'candidates', action: 'read', description: 'View candidates', is_active: 'Y' },
+  { name: 'candidates.update', module: 'candidates', action: 'update', description: 'Update candidates', is_active: 'Y' },
+  { name: 'candidates.delete', module: 'candidates', action: 'delete', description: 'Delete candidates', is_active: 'Y' },
+  
+  { name: 'departments.create', module: 'departments', action: 'create', description: 'Create departments', is_active: 'Y' },
+  { name: 'departments.read', module: 'departments', action: 'read', description: 'View departments', is_active: 'Y' },
+  { name: 'departments.update', module: 'departments', action: 'update', description: 'Update departments', is_active: 'Y' },
+  { name: 'departments.delete', module: 'departments', action: 'delete', description: 'Delete departments', is_active: 'Y' },
+  
+  { name: 'roles.create', module: 'roles', action: 'create', description: 'Create roles', is_active: 'Y' },
+  { name: 'roles.read', module: 'roles', action: 'read', description: 'View roles', is_active: 'Y' },
+  { name: 'roles.update', module: 'roles', action: 'update', description: 'Update roles', is_active: 'Y' },
+  { name: 'roles.delete', module: 'roles', action: 'delete', description: 'Delete roles', is_active: 'Y' },
+  
+  { name: 'reports.read', module: 'reports', action: 'read', description: 'View reports', is_active: 'Y' },
+  { name: 'reports.export', module: 'reports', action: 'export', description: 'Export reports', is_active: 'Y' },
+  
+  { name: 'settings.read', module: 'settings', action: 'read', description: 'View settings', is_active: 'Y' },
+  { name: 'settings.update', module: 'settings', action: 'update', description: 'Update settings', is_active: 'Y' },
 ];
 
-/**
- * @constant mockPermissions
- * @description Generated permissions array populated during module iteration
- * @type {MockPermission[]}
- */
-const mockPermissions: MockPermission[] = [];
+export const seedPermissions = async () => {
+  logger.info('🌱 Seeding permissions...');
 
-/**
- * @constant READ_ONLY_MODULES
- * @description Modules that should not have delete permissions (read-only or system modules)
- * @type {string[]}
- */
-const READ_ONLY_MODULES = [
-  'dashboard',
-  'report',
-  'location',
-  'route-effectiveness',
-  'erp-sync',
-  'profile',
-  'login-history',
-];
-
-/**
- * @description Generates CRUD permissions for each module based on available actions
- * @description Iterates through all modules and actions to create permission entries
- */
-MODULES.forEach(moduleKey => {
-  ACTIONS.forEach(action => {
-    if (READ_ONLY_MODULES.includes(moduleKey) && action.key === 'delete') {
-      return;
-    }
-
-    if (moduleKey === 'setting' && action.key !== 'read') {
-      return;
-    }
-
-    const moduleDisplayName = MODULE_MAPPING[moduleKey];
-    const moduleNameForPermission = moduleKey.replace(/-/g, '_').toLowerCase();
-
-    mockPermissions.push({
-      name: `${moduleNameForPermission}_${action.key}`,
-      module: moduleDisplayName,
-      action: action.name,
-      description: `${action.description} for ${moduleDisplayName}`,
-      is_active: 'Y',
-    });
-  });
-});
-
-/**
- * @function seedPermissions
- * @description Seeds permissions table with generated mock permissions data
- * @description Uses createMany for better performance, only creates non-existing permissions
- * @returns {Promise<void>}
- * @throws {Error} If seeding fails
- */
-export async function seedPermissions(): Promise<void> {
   try {
-    const permissionsToCreate = [];
+    let permissionsCreated = 0;
+    let permissionsSkipped = 0;
 
     for (const permission of mockPermissions) {
       const existingPermission = await prisma.permissions.findFirst({
-        where: {
-          name: permission.name,
-        },
+        where: { name: permission.name },
       });
 
       if (!existingPermission) {
-        permissionsToCreate.push({
-          name: permission.name,
-          module: permission.module,
-          action: permission.action,
-          description: permission.description || null,
-          is_active: permission.is_active,
-          createdate: new Date(),
-          createdby: 1,
-          updatedate: new Date(),
-          updatedby: 1,
+        await prisma.permissions.create({
+          data: {
+            name: permission.name,
+            module: permission.module,
+            action: permission.action,
+            description: permission.description,
+            is_active: permission.is_active,
+            createdate: new Date(),
+            createdby: 1,
+          },
         });
+        permissionsCreated++;
+      } else {
+        permissionsSkipped++;
       }
     }
 
-    if (permissionsToCreate.length > 0) {
-      await prisma.permissions.createMany({
-        data: permissionsToCreate,
-      });
-    }
+    logger.info(
+      `✅ Permissions seeded: ${permissionsCreated} created, ${permissionsSkipped} skipped`
+    );
   } catch (error) {
-    console.error('Error seeding permissions:', error);
+    logger.error('Error seeding permissions:', error);
     throw error;
   }
-}
+};
 
-/**
- * @function clearPermissions
- * @description Clears all permissions and related role_permissions from the database
- * @description Deletes role_permissions first to avoid foreign key constraint violations
- * @returns {Promise<void>}
- * @throws {Error} If clearing fails
- */
-export async function clearPermissions(): Promise<void> {
-  try {
-    await prisma.role_permissions.deleteMany({});
-    await prisma.permissions.deleteMany({});
-  } catch (error) {
-    throw error;
-  }
-}
-
-/**
- * @function addSinglePermission
- * @description Adds a single permission to the database
- * @param {string} moduleKey - Module key (e.g., 'user', 'company', 'depot')
- * @param {string} actionKey - Action key (e.g., 'read', 'create', 'update', 'delete')
- * @param {number} createdBy - User ID who is creating the permission (default: 1)
- * @returns {Promise<{success: boolean, message: string, permission?: any}>}
- * @throws {Error} If adding permission fails
- */
-export async function addSinglePermission(
-  moduleKey: string,
-  actionKey: string,
-  createdBy: number = 1
-): Promise<{ success: boolean; message: string; permission?: any }> {
-  try {
-    const moduleDisplayName = MODULE_MAPPING[moduleKey];
-    if (!moduleDisplayName) {
-      return {
-        success: false,
-        message: `Invalid module key: ${moduleKey}. Available modules: ${MODULES.join(', ')}`,
-      };
-    }
-
-    const action = ACTIONS.find(a => a.key === actionKey);
-    if (!action) {
-      return {
-        success: false,
-        message: `Invalid action key: ${actionKey}. Available actions: ${ACTIONS.map(a => a.key).join(', ')}`,
-      };
-    }
-
-    if (READ_ONLY_MODULES.includes(moduleKey) && actionKey === 'delete') {
-      return {
-        success: false,
-        message: `Module "${moduleKey}" does not support delete action`,
-      };
-    }
-
-    if (moduleKey === 'setting' && actionKey !== 'read') {
-      return {
-        success: false,
-        message: `Module "setting" only supports read action`,
-      };
-    }
-
-    const moduleNameForPermission = moduleKey.replace(/-/g, '_').toLowerCase();
-    const permissionName = `${moduleNameForPermission}_${actionKey}`;
-
-    const existingPermission = await prisma.permissions.findFirst({
-      where: {
-        name: permissionName,
+export const clearPermissions = async () => {
+  logger.info('Clearing permissions...');
+  await prisma.permissions.deleteMany({
+    where: {
+      name: {
+        in: mockPermissions.map(p => p.name),
       },
-    });
-
-    if (existingPermission) {
-      return {
-        success: false,
-        message: `Permission "${permissionName}" already exists`,
-        permission: existingPermission,
-      };
-    }
-
-    const permission = await prisma.permissions.create({
-      data: {
-        name: permissionName,
-        module: moduleDisplayName,
-        action: action.name,
-        description: `${action.description} for ${moduleDisplayName}`,
-        is_active: 'Y',
-        createdate: new Date(),
-        createdby: createdBy,
-        updatedate: new Date(),
-        updatedby: createdBy,
-      },
-    });
-
-    return {
-      success: true,
-      message: `Permission "${permissionName}" created successfully`,
-      permission,
-    };
-  } catch (error) {
-    console.error('Error adding permission:', error);
-    throw error;
-  }
-}
-
-/**
- * @function addModulePermissions
- * @description Adds all CRUD permissions for a module
- * @param {string} moduleKey - Module key (e.g., 'user', 'company', 'depot')
- * @param {number} createdBy - User ID who is creating the permissions (default: 1)
- * @returns {Promise<{success: boolean, message: string, added: number, skipped: number, permissions?: any[]}>}
- * @throws {Error} If adding permissions fails
- */
-export async function addModulePermissions(
-  moduleKey: string,
-  createdBy: number = 1
-): Promise<{
-  success: boolean;
-  message: string;
-  added: number;
-  skipped: number;
-  permissions?: any[];
-}> {
-  try {
-    const moduleDisplayName = MODULE_MAPPING[moduleKey];
-    if (!moduleDisplayName) {
-      return {
-        success: false,
-        message: `Invalid module key: ${moduleKey}. Available modules: ${MODULES.join(', ')}`,
-        added: 0,
-        skipped: 0,
-      };
-    }
-
-    const moduleNameForPermission = moduleKey.replace(/-/g, '_').toLowerCase();
-    const permissionsToAdd = [];
-    const addedPermissions = [];
-    let skippedCount = 0;
-
-    for (const action of ACTIONS) {
-      if (READ_ONLY_MODULES.includes(moduleKey) && action.key === 'delete') {
-        continue;
-      }
-
-      if (moduleKey === 'setting' && action.key !== 'read') {
-        continue;
-      }
-
-      const permissionName = `${moduleNameForPermission}_${action.key}`;
-
-      const existingPermission = await prisma.permissions.findFirst({
-        where: {
-          name: permissionName,
-        },
-      });
-
-      if (existingPermission) {
-        skippedCount++;
-        continue;
-      }
-
-      permissionsToAdd.push({
-        name: permissionName,
-        module: moduleDisplayName,
-        action: action.name,
-        description: `${action.description} for ${moduleDisplayName}`,
-        is_active: 'Y',
-        createdate: new Date(),
-        createdby: createdBy,
-        updatedate: new Date(),
-        updatedby: createdBy,
-      });
-    }
-
-    if (permissionsToAdd.length === 0) {
-      return {
-        success: true,
-        message: `All permissions for module "${moduleKey}" already exist`,
-        added: 0,
-        skipped: skippedCount,
-      };
-    }
-
-    const createdPermissions = await prisma.permissions.createMany({
-      data: permissionsToAdd,
-    });
-
-    const createdPermissionNames = permissionsToAdd.map(p => p.name);
-    const fetchedPermissions = await prisma.permissions.findMany({
-      where: {
-        name: { in: createdPermissionNames },
-      },
-    });
-
-    return {
-      success: true,
-      message: `Successfully added ${createdPermissions.count} permission(s) for module "${moduleKey}"`,
-      added: createdPermissions.count,
-      skipped: skippedCount,
-      permissions: fetchedPermissions,
-    };
-  } catch (error) {
-    console.error('Error adding module permissions:', error);
-    throw error;
-  }
-}
-
-/**
- * @exports mockPermissions
- * @description Exported mock permissions array for use in other modules
- */
-export { mockPermissions };
+    },
+  });
+  logger.info('Permissions cleared.');
+};

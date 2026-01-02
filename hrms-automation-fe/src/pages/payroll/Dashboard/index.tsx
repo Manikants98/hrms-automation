@@ -1,4 +1,4 @@
-import { Chip, Typography } from '@mui/material';
+import { Avatar, Box, Chip, Typography } from '@mui/material';
 import {
   ArcElement,
   BarElement,
@@ -63,9 +63,15 @@ const PayrollDashboard: React.FC = () => {
       limit: 1000,
     });
 
-  const payrollProcessing = payrollProcessingResponse?.data || [];
-  const salarySlips = salarySlipsResponse?.data || [];
-  const salaryStructures = salaryStructuresResponse?.data || [];
+  const payrollProcessing = Array.isArray(payrollProcessingResponse?.data)
+    ? payrollProcessingResponse.data
+    : [];
+  const salarySlips = Array.isArray(salarySlipsResponse?.data)
+    ? salarySlipsResponse.data
+    : [];
+  const salaryStructures = Array.isArray(salaryStructuresResponse?.data)
+    ? salaryStructuresResponse.data
+    : [];
 
   const getMonthName = (month: string) => {
     const monthNames = [
@@ -97,19 +103,19 @@ const PayrollDashboard: React.FC = () => {
     ).length;
 
     const totalNetSalary = payrollProcessing.reduce(
-      (sum, p) => sum + p.total_net_salary,
+      (sum, p) => sum + Number(p.total_net_salary),
       0
     );
     const totalEarnings = payrollProcessing.reduce(
-      (sum, p) => sum + p.total_earnings,
+      (sum, p) => sum + Number(p.total_earnings),
       0
     );
     const totalDeductions = payrollProcessing.reduce(
-      (sum, p) => sum + p.total_deductions,
+      (sum, p) => sum + Number(p.total_deductions),
       0
     );
     const totalLeaveDeductions = payrollProcessing.reduce(
-      (sum, p) => sum + p.total_leave_deductions,
+      (sum, p) => sum + Number(p.total_leave_deductions),
       0
     );
 
@@ -518,15 +524,27 @@ const PayrollDashboard: React.FC = () => {
             data={stats.recentSalarySlips}
             columns={[
               {
-                id: 'employee_name',
+                id: 'employee',
                 label: 'Employee',
                 render: (_value, row: SalarySlip) => (
-                  <Typography
-                    variant="body2"
-                    className="!font-medium !text-gray-900"
-                  >
-                    {row.employee_name}
-                  </Typography>
+                  <Box className="!flex !gap-2 !items-center">
+                    <Avatar
+                      alt={row.employee.name}
+                      src={'mkx'}
+                      className="!rounded !bg-primary-100 !text-primary-500"
+                    />
+                    <Box className="!max-w-xs">
+                      <Typography
+                        variant="body2"
+                        className="!font-medium !text-gray-900"
+                      >
+                        {row.employee.name}
+                      </Typography>
+                      <Typography variant="caption" className="!text-gray-500">
+                        {row.employee.email}
+                      </Typography>
+                    </Box>
+                  </Box>
                 ),
               },
               {

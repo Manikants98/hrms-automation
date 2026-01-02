@@ -14,8 +14,9 @@ import {
   useDeletePayrollProcessing,
   usePayrollProcessing,
   type PayrollProcessing,
-  type PayrollStatus,
 } from 'hooks/usePayrollProcessing';
+
+type PayrollStatus = 'Draft' | 'Processed' | 'Paid' | 'Cancelled';
 import { usePermission } from 'hooks/usePermission';
 import { Calendar, DollarSign, FileText, TrendingUp } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
@@ -62,7 +63,7 @@ const PayrollProcessingPage: React.FC = () => {
     }
   );
 
-  const payrollProcessing = payrollProcessingResponse?.data || [];
+  const payrollProcessing = Array.isArray(payrollProcessingResponse?.data) ? payrollProcessingResponse.data : [];
   const totalCount = payrollProcessingResponse?.meta?.total_count || 0;
   const currentPage = (payrollProcessingResponse?.meta?.current_page || 1) - 1;
 

@@ -64,16 +64,16 @@ const LeaveApplicationPage: React.FC = () => {
       search,
       page,
       limit,
-      approvalStatus:
+      approval_status:
         approvalStatusFilter !== 'all' ? approvalStatusFilter : undefined,
-      leaveType: leaveTypeFilter !== 'all' ? leaveTypeFilter : undefined,
+      leave_type_id: leaveTypeFilter !== 'all' ? Number(leaveTypeFilter) : undefined,
     },
     {
       enabled: isRead !== false,
     }
   );
 
-  const leaveApplications = leaveApplicationsResponse?.data || [];
+  const leaveApplications = Array.isArray(leaveApplicationsResponse?.data) ? leaveApplicationsResponse.data : [];
   const totalCount = leaveApplicationsResponse?.meta?.total_count || 0;
   const currentPage = (leaveApplicationsResponse?.meta?.current_page || 1) - 1;
 
@@ -124,6 +124,7 @@ const LeaveApplicationPage: React.FC = () => {
       try {
         await approveLeaveApplicationMutation.mutateAsync({
           id,
+          approval_status: 'Approved',
           approved_by: 1,
         });
       } catch (error) {
@@ -236,8 +237,8 @@ const LeaveApplicationPage: React.FC = () => {
       label: 'Leave Type',
       render: (_value, row) => (
         <Chip
-          label={row.leave_type}
-          color={getLeaveTypeColor(row.leave_type) as any}
+          label={row.leave_type_name}
+          color={getLeaveTypeColor(row.leave_type_name as LeaveType) as any}
           size="small"
           variant="outlined"
         />

@@ -1,13 +1,11 @@
 import { Add, Delete } from '@mui/icons-material';
-import { Box, MenuItem, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import {
   useCreateLeaveBalance,
   useUpdateLeaveBalance,
   type LeaveBalance,
   type LeaveBalanceItem,
-  type LeaveBalanceStatus,
-  type LeaveType,
 } from 'hooks/useLeaveBalances';
 import React, { useMemo } from 'react';
 import { leaveBalanceValidationSchema } from 'schemas/leaveBalance.schema';
@@ -17,7 +15,6 @@ import Button from 'shared/Button';
 import CustomDrawer from 'shared/Drawer';
 import EmployeeSelect from 'shared/EmployeeSelect';
 import Input from 'shared/Input';
-import Select from 'shared/Select';
 import Table, { type TableColumn } from 'shared/Table';
 
 interface ManageLeaveBalanceProps {
@@ -27,28 +24,8 @@ interface ManageLeaveBalanceProps {
   setDrawerOpen: (drawerOpen: boolean) => void;
 }
 
-const leaveTypeOptions: LeaveType[] = [
-  'Annual',
-  'Sick',
-  'Casual',
-  'Emergency',
-  'Maternity',
-  'Paternity',
-  'Unpaid',
-  'Marriage',
-  'Earned',
-  'Informal',
-  'Formal',
-  'Normal',
-] as LeaveType[];
-
 const getDefaultLeaveTypeItems = (): LeaveBalanceItem[] => {
-  return leaveTypeOptions.map(leaveType => ({
-    leave_type: leaveType,
-    total_allocated: 0,
-    used: 0,
-    leave_balance: 0,
-  }));
+  return [];
 };
 
 const ManageLeaveBalance: React.FC<ManageLeaveBalanceProps> = ({
@@ -71,26 +48,19 @@ const ManageLeaveBalance: React.FC<ManageLeaveBalanceProps> = ({
     const items =
       selectedLeaveBalance?.leave_type_items || getDefaultLeaveTypeItems();
     return items.map(item => ({
-      ...item,
+      leave_type_id: item.leave_type_id,
+      leave_type_name: item.leave_type_name,
       total_allocated: item.total_allocated || 0,
       used: item.used || 0,
-      leave_balance: (item.total_allocated || 0) - (item.used || 0),
+      balance: item.balance || 0,
     }));
   };
 
   const formik = useFormik({
     initialValues: {
       employee_id: selectedLeaveBalance?.employee_id || 0,
-      start_date: selectedLeaveBalance?.start_date || '',
-      end_date: selectedLeaveBalance?.end_date || '',
-      status: (selectedLeaveBalance?.status || 'Active') as
-        | 'Active'
-        | 'Inactive',
-      statusField:
-        selectedLeaveBalance?.status === 'Active' ||
-        !selectedLeaveBalance?.status
-          ? 'Y'
-          : 'N',
+      year: selectedLeaveBalance?.year || new Date().getFullYear(),
+      is_active: selectedLeaveBalance?.is_active || 'Y',
       leave_type_items: getInitialLeaveTypeItems(),
     },
     validationSchema: leaveBalanceValidationSchema,
@@ -99,16 +69,14 @@ const ManageLeaveBalance: React.FC<ManageLeaveBalanceProps> = ({
       try {
         const leaveBalanceData = {
           employee_id: values.employee_id,
-          start_date: values.start_date,
-          end_date: values.end_date,
-          status: (values.statusField === 'Y'
-            ? 'Active'
-            : 'Inactive') as LeaveBalanceStatus,
+          year: values.year,
+          is_active: values.is_active as 'Y' | 'N',
           leave_type_items: values.leave_type_items.map(item => ({
-            leave_type: item.leave_type,
+            leave_type_id: item.leave_type_id || 0,
+            leave_type_name: item.leave_type_name || '',
             total_allocated: item.total_allocated,
             used: item.used,
-            leave_balance: item.total_allocated - item.used,
+            balance: item.total_allocated - item.used,
           })),
         };
 
@@ -130,10 +98,11 @@ const ManageLeaveBalance: React.FC<ManageLeaveBalanceProps> = ({
 
   const handleAddLeaveTypeItem = () => {
     const newItem: LeaveBalanceItem = {
-      leave_type: 'Annual',
+      leave_type_id: 0,
+      leave_type_name: '',
       total_allocated: 0,
       used: 0,
-      leave_balance: 0,
+      balance: 0,
     };
     formik.setFieldValue('leave_type_items', [
       ...formik.values.leave_type_items,
@@ -160,8 +129,7 @@ const ManageLeaveBalance: React.FC<ManageLeaveBalanceProps> = ({
     };
 
     if (field === 'total_allocated' || field === 'used') {
-      items[index].leave_balance =
-        items[index].total_allocated - items[index].used;
+      items[index].balance = items[index].total_allocated - items[index].used;
     }
 
     formik.setFieldValue('leave_type_items', items);
@@ -171,25 +139,18 @@ const ManageLeaveBalance: React.FC<ManageLeaveBalanceProps> = ({
     LeaveBalanceItem & { index: number }
   >[] = [
     {
-      id: 'leave_type',
+      id: 'leave_type_name',
       label: 'Leave Type',
       sortable: false,
       width: '30%',
       render: (_value, row) => (
-        <Select
-          name={`leave_type_items.${row.index}.leave_type`}
+        <Input
+          name={`leave_type_items.${row.index}.leave_type_name`}
           formik={formik}
-          value={row.leave_type}
-          fullWidth
+          value={row.leave_type_name || ''}
           size="small"
-          className="!w-48"
-        >
-          {leaveTypeOptions.map(type => (
-            <MenuItem key={type} value={type}>
-              {type} Leave
-            </MenuItem>
-          ))}
-        </Select>
+          placeholder="Leave Type Name"
+        />
       ),
     },
     {
@@ -245,14 +206,14 @@ const ManageLeaveBalance: React.FC<ManageLeaveBalanceProps> = ({
       ),
     },
     {
-      id: 'leave_balance',
+      id: 'balance',
       label: 'Leave Balance',
       sortable: false,
       render: (_value, row) => {
         const balance = (row.total_allocated || 0) - (row.used || 0);
         return (
           <Input
-            name={`leave_type_items.${row.index}.leave_balance`}
+            name={`leave_type_items.${row.index}.balance`}
             type="number"
             formik={formik}
             value={balance}

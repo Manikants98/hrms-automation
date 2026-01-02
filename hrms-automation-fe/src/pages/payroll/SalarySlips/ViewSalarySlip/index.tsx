@@ -1,10 +1,6 @@
 import { Box, Chip, Divider, Typography } from '@mui/material';
 import dayjs from 'dayjs';
-import {
-  useSalarySlipById,
-  type PayrollStatus,
-  type SalarySlip,
-} from 'hooks/useSalarySlips';
+import { useSalarySlipById, type SalarySlip } from 'hooks/useSalarySlips';
 import React from 'react';
 import CustomDrawer from 'shared/Drawer';
 
@@ -35,7 +31,7 @@ const ViewSalarySlip: React.FC<ViewSalarySlipProps> = ({
     setDrawerOpen(false);
   };
 
-  const getStatusColor = (status: PayrollStatus) => {
+  const getStatusColor = (status: SalarySlip['status']) => {
     switch (status) {
       case 'Processed':
         return 'success';
@@ -43,8 +39,6 @@ const ViewSalarySlip: React.FC<ViewSalarySlipProps> = ({
         return 'info';
       case 'Draft':
         return 'warning';
-      case 'Cancelled':
-        return 'error';
       default:
         return 'default';
     }
@@ -77,7 +71,7 @@ const ViewSalarySlip: React.FC<ViewSalarySlipProps> = ({
     <CustomDrawer
       open={drawerOpen}
       setOpen={handleCancel}
-      title={`Salary Slip - ${salarySlip.employee_name}`}
+      title={`Salary Slip - ${salarySlip.employee?.name || 'N/A'}`}
       size="medium"
     >
       <Box className="!p-5 print-container">
@@ -123,7 +117,7 @@ const ViewSalarySlip: React.FC<ViewSalarySlipProps> = ({
                 variant="body1"
                 className="!font-medium !text-gray-900"
               >
-                {salarySlip.employee_name}
+                {salarySlip.employee?.name || '-'}
               </Typography>
             </Box>
             <Box>
@@ -131,7 +125,7 @@ const ViewSalarySlip: React.FC<ViewSalarySlipProps> = ({
                 Employee Code
               </Typography>
               <Typography variant="body1" className="!text-gray-900">
-                {salarySlip.employee_code || '-'}
+                {salarySlip.employee?.employee_id || '-'}
               </Typography>
             </Box>
             <Box>
@@ -139,7 +133,7 @@ const ViewSalarySlip: React.FC<ViewSalarySlipProps> = ({
                 Email
               </Typography>
               <Typography variant="body1" className="!text-gray-900">
-                {salarySlip.employee_email || '-'}
+                {salarySlip.employee?.email || '-'}
               </Typography>
             </Box>
             <Box>

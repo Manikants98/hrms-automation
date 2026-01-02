@@ -13,8 +13,11 @@ export const createUserValidation = [
     .optional()
     .isInt()
     .withMessage('Parent ID must be a number'),
-  body('depot_id').optional().isInt().withMessage('Depot ID must be a number'),
-  body('zone_id').optional().isInt().withMessage('Zone ID must be a number'),
+  body('department_id').optional().isInt().withMessage('Department ID must be a number'),
+  body('designation_id').optional().isInt().withMessage('Designation ID must be a number'),
+  body('shift_id').optional().isInt().withMessage('Shift ID must be a number'),
+  body('salary').optional().isFloat({ min: 0 }).withMessage('Salary must be a positive number'),
+  body('currency_code').optional().isLength({ max: 10 }).withMessage('Currency code must not exceed 10 characters'),
   body('employee_id').optional().isString(),
   body('joining_date')
     .optional()
@@ -37,20 +40,38 @@ export const createUserValidation = [
 ];
 
 export const updateUserValidation = [
-  body('username')
-    .optional()
-    .isLength({ min: 3 })
-    .withMessage('Username must be at least 3 characters long'),
-
   body('email').optional().isEmail().withMessage('Enter a valid email'),
-
   body('password')
     .optional()
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters'),
-
-  body('role')
+  body('name').optional().notEmpty().withMessage('Name cannot be empty'),
+  body('role_id')
     .optional()
-    .isIn(['admin', 'user', 'manager'])
-    .withMessage('Role must be admin, user or manager'),
+    .isInt()
+    .withMessage('Role ID must be a number'),
+  body('parent_id')
+    .optional()
+    .isInt()
+    .withMessage('Parent ID must be a number'),
+  body('department_id').optional().isInt().withMessage('Department ID must be a number'),
+  body('designation_id').optional().isInt().withMessage('Designation ID must be a number'),
+  body('shift_id').optional().isInt().withMessage('Shift ID must be a number'),
+  body('salary').optional().isFloat({ min: 0 }).withMessage('Salary must be a positive number'),
+  body('currency_code').optional().isLength({ max: 10 }).withMessage('Currency code must not exceed 10 characters'),
+  body('employee_id').optional().isString(),
+  body('joining_date')
+    .optional()
+    .isISO8601()
+    .withMessage('Joining date must be a valid date'),
+  body('phone_number')
+    .optional()
+    .isString()
+    .withMessage('Phone number must be a string'),
+  body('address').optional().isString(),
+  body('reporting_to').optional().isInt(),
+  body('is_active')
+    .optional()
+    .isIn(['Y', 'N'])
+    .withMessage('is_active must be Y or N'),
 ];

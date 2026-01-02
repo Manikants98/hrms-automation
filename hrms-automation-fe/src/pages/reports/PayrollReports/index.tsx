@@ -62,17 +62,25 @@ const PayrollReports: React.FC = () => {
   const { data: salarySlipsResponse, isLoading: salarySlipsLoading } =
     useSalarySlips({
       search,
-      employeeId: employeeFilter,
-      payrollMonth: monthFilter || undefined,
-      payrollYear: yearFilter ? Number(yearFilter) : undefined,
+      employee_id: employeeFilter,
+      payroll_month: monthFilter || undefined,
+      payroll_year: yearFilter ? Number(yearFilter) : undefined,
       status:
-        statusFilter !== 'all' ? (statusFilter as PayrollStatus) : undefined,
+        statusFilter !== 'all' && statusFilter !== 'Cancelled'
+          ? (statusFilter as 'Draft' | 'Processed' | 'Paid')
+          : undefined,
       limit: 1000,
     });
 
-  const employees = employeesResponse?.data || [];
-  const payrollProcessing = payrollProcessingResponse?.data || [];
-  const salarySlips = salarySlipsResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data)
+    ? employeesResponse.data
+    : [];
+  const payrollProcessing = Array.isArray(payrollProcessingResponse?.data)
+    ? payrollProcessingResponse.data
+    : [];
+  const salarySlips = Array.isArray(salarySlipsResponse?.data)
+    ? salarySlipsResponse.data
+    : [];
 
   const filteredPayrollProcessing = useMemo(() => {
     let filtered = [...payrollProcessing];
@@ -139,19 +147,19 @@ const PayrollReports: React.FC = () => {
     ).length;
 
     const totalEarnings = filteredPayrollProcessing.reduce(
-      (sum, p) => sum + p.total_earnings,
+      (sum, p) => sum + Number(p.total_earnings),
       0
     );
     const totalDeductions = filteredPayrollProcessing.reduce(
-      (sum, p) => sum + p.total_deductions,
+      (sum, p) => sum + Number(p.total_deductions),
       0
     );
     const totalLeaveDeductions = filteredPayrollProcessing.reduce(
-      (sum, p) => sum + p.total_leave_deductions,
+      (sum, p) => sum + Number(p.total_leave_deductions),
       0
     );
     const totalNetSalary = filteredPayrollProcessing.reduce(
-      (sum, p) => sum + p.total_net_salary,
+      (sum, p) => sum + Number(p.total_net_salary),
       0
     );
 
@@ -319,22 +327,22 @@ const PayrollReports: React.FC = () => {
 
   const salarySlipColumns: TableColumn<SalarySlip>[] = [
     {
-      id: 'employee_name',
+      id: 'employee',
       label: 'Employee Name',
       render: (_value, row) => (
         <Box className="!flex !gap-2 !items-center">
           <Avatar
-            alt={row.employee_name}
+            alt={row.employee.name}
             className="!rounded !bg-primary-100 !text-primary-500"
           >
             <User className="w-5 h-5" />
           </Avatar>
           <Box className="!max-w-xs">
             <Typography variant="body2" className="!font-medium !text-gray-900">
-              {row.employee_name}
+              {row.employee.name}
             </Typography>
             <Typography variant="caption" className="!text-gray-500">
-              {row.employee_email}
+              {row.employee.email}
             </Typography>
           </Box>
         </Box>

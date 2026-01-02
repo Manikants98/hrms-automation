@@ -16,8 +16,8 @@ import {
   useDeleteLeaveBalance,
   useLeaveBalances,
   type LeaveBalance,
-  type LeaveBalanceStatus,
 } from 'hooks/useLeaveBalances';
+import type { LeaveBalanceStatus } from 'services/leaveBalances';
 import { usePermission } from 'hooks/usePermission';
 import { Calendar, User } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
@@ -68,14 +68,47 @@ const LeaveBalancePage: React.FC = () => {
     }
   );
 
-  const employees = employeesResponse?.data || [];
-  const leaveBalancesData = leaveBalancesResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data) ? employeesResponse?.data : [];
+  const leaveBalancesData = Array.isArray(leaveBalancesResponse?.data) ? leaveBalancesResponse?.data : [];
 
   const leaveBalanceMap = React.useMemo(() => {
     const map = new Map<number, LeaveBalance>();
-    leaveBalancesData.forEach(balance => {
-      map.set(balance.employee_id, balance);
-    });
+    if (Array.isArray(leaveBalancesData)) {
+      leaveBalancesData?.forEach((balance: any) => {
+        const existingBalance = map.get(balance.employee_id);
+        
+        if (existingBalance) {
+          // Add to existing employee's leave_type_items
+          existingBalance.leave_type_items.push({
+            leave_type_id: balance.leave_type_id,
+            leave_type_name: balance.leave_type?.name || 'Unknown',
+            total_allocated: balance.total_allocated,
+            used: balance.used,
+            balance: balance.balance,
+          });
+        } else {
+          // Create new employee entry
+          map.set(balance.employee_id, {
+            id: balance.id,
+            employee_id: balance.employee_id,
+            employee_name: balance.employee?.name || '',
+            employee_email: balance.employee?.email || '',
+            leave_type_items: [{
+              leave_type_id: balance.leave_type_id,
+              leave_type_name: balance.leave_type?.name || 'Unknown',
+              total_allocated: balance.total_allocated,
+              used: balance.used,
+              balance: balance.balance,
+            }],
+            year: balance.year,
+            status: balance.is_active === 'Y' ? 'Active' : 'Expired',
+            createdate: balance.createdate,
+            updatedate: balance.updatedate,
+            is_active: balance.is_active,
+          });
+        }
+      });
+    }
     return map;
   }, [leaveBalancesData]);
 
@@ -97,8 +130,8 @@ const LeaveBalancePage: React.FC = () => {
           employee_name: employee.name,
           employee_code: employee.employee_id || '',
           employee_email: employee.email,
-          start_date: '',
-          end_date: '',
+          year: new Date().getFullYear(),
+          is_active: 'Y' as const,
           status: 'Active' as LeaveBalanceStatus,
           leave_type_items: [],
           createdate: '',
@@ -126,16 +159,18 @@ const LeaveBalancePage: React.FC = () => {
     let totalUsed = 0;
     let totalRemaining = 0;
 
-    leaveBalancesData.forEach(balance => {
-      balance.leave_type_items.forEach(item => {
-        totalAllocated += item.total_allocated || 0;
-        totalUsed += item.used || 0;
-        totalRemaining += item.leave_balance || 0;
-      });
+    leaveBalanceMap.forEach((balance) => {
+      if (Array.isArray(balance.leave_type_items)) {
+        balance.leave_type_items.forEach(item => {
+          totalAllocated += item.total_allocated || 0;
+          totalUsed += item.used || 0;
+          totalRemaining += item.balance || 0;
+        });
+      }
     });
 
     return { totalAllocated, totalUsed, totalRemaining };
-  }, [leaveBalancesData]);
+  }, [leaveBalanceMap]);
 
   const totalAllocated = stats.totalAllocated;
   const totalUsed = stats.totalUsed;
@@ -211,36 +246,27 @@ const LeaveBalancePage: React.FC = () => {
               {row.employee_name}
             </Typography>
             <Typography variant="caption" className="!text-gray-500">
-              {row.employee_email}
+              {row.employee_code}
             </Typography>
           </Box>
         </Box>
       ),
     },
     {
-      id: 'employee_code',
-      label: 'Employee Code',
+      id: 'email',
+      label: 'Email',
       render: (_value, row) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.employee_code || '-'}
+          {row.employee_email || '-'}
         </Typography>
       ),
     },
     {
-      id: 'start_date',
-      label: 'Start Date',
+      id: 'year',
+      label: 'Year',
       render: (_value, row) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.start_date ? dayjs(row.start_date).format('DD-MM-YYYY') : '-'}
-        </Typography>
-      ),
-    },
-    {
-      id: 'end_date',
-      label: 'End Date',
-      render: (_value, row) => (
-        <Typography variant="body2" className="!text-gray-900">
-          {row.end_date ? dayjs(row.end_date).format('DD-MM-YYYY') : '-'}
+          {row.year || '-'}
         </Typography>
       ),
     },
@@ -375,7 +401,7 @@ const LeaveBalancePage: React.FC = () => {
                       >
                         <MenuItem value="all">All Status</MenuItem>
                         <MenuItem value="Active">Active</MenuItem>
-                        <MenuItem value="Inactive">Inactive</MenuItem>
+                        <MenuItem value="Expired">Expired</MenuItem>
                       </MuiSelect>
                     </FormControl>
                   </>

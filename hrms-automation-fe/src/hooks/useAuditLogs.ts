@@ -4,6 +4,7 @@ import {
   type AuditLogFilters,
   type AuditLogsResponse,
 } from '../services/auditLogs';
+import type { ApiResponse } from 'types/api.types';
 
 export const auditLogKeys = {
   all: ['audit-logs'] as const,
@@ -17,11 +18,14 @@ export const auditLogKeys = {
  */
 export const useAuditLogs = (
   filters?: AuditLogFilters,
-  options?: Omit<UseQueryOptions<AuditLogsResponse>, 'queryKey' | 'queryFn'>
+  options?: Omit<
+    UseQueryOptions<ApiResponse<AuditLogsResponse>>,
+    'queryKey' | 'queryFn'
+  >
 ) => {
-  return useQuery<AuditLogsResponse>({
+  return useQuery<ApiResponse<AuditLogsResponse>>({
     queryKey: auditLogKeys.list(filters),
-    queryFn: () => fetchAuditLogs(filters),
+    queryFn: async () => await fetchAuditLogs(filters),
     staleTime: 3 * 60 * 1000,
     ...options,
   });

@@ -44,8 +44,8 @@ const ActivityLogs: React.FC = () => {
   const { data: usersData } = useUsers();
   const users = usersData?.data || [];
 
-  const logs = auditData?.logs || [];
-  const statistics = auditData?.statistics || {
+  const logs = auditData?.data?.logs || [];
+  const statistics = auditData?.data?.statistics || {
     total_logs: 0,
     by_action: { CREATE: 0, UPDATE: 0, DELETE: 0 },
     unique_tables: [],
@@ -53,12 +53,13 @@ const ActivityLogs: React.FC = () => {
     unique_tables_count: 0,
     unique_users_count: 0,
   };
-  const pagination = auditData?.pagination || {
-    page: 1,
-    limit: 10,
-    total: 0,
-    total_pages: 0,
-  };
+  const pagination = auditData?.data?.pagination ||
+    auditData?.meta || {
+      page: 1,
+      limit: 10,
+      total: 0,
+      total_pages: 0,
+    };
 
   const columns: TableColumn<any>[] = [
     {

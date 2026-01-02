@@ -1,7 +1,7 @@
 /**
  * @fileoverview Roles Seeder
- * @description Creates 11 sample roles for testing and development
- * @author DCC-SFA Team
+ * @description Creates HRMS-specific roles for testing and development
+ * @author HRMS Team
  * @version 1.0.0
  */
 
@@ -20,7 +20,7 @@ interface MockRole {
 
 /**
  * @constant mockRoles
- * @description Array of mock roles with their associated permissions
+ * @description Array of HRMS roles with their associated permissions
  * @type {MockRole[]}
  */
 const mockRoles: MockRole[] = [
@@ -31,71 +31,68 @@ const mockRoles: MockRole[] = [
     permissions: ['*'],
   },
   {
-    name: 'Admin',
-    description: 'Administrative access with most permissions',
+    name: 'HR Admin',
+    description: 'Human Resources administration with full HR module access',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Manager',
-    description: 'Management role with oversight permissions',
+    name: 'HR Manager',
+    description: 'HR management role with oversight and reporting permissions',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Sales Manager',
-    description: 'Sales team management and reporting',
+    name: 'HR Executive',
+    description: 'HR operations and employee management',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Sales Representative',
-    description: 'Field sales and customer interaction',
+    name: 'Recruitment Manager',
+    description: 'Recruitment and hiring process management',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Warehouse Manager',
-    description: 'Inventory and warehouse operations',
+    name: 'Recruiter',
+    description: 'Job posting, candidate screening and hiring operations',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Warehouse Staff',
-    description: 'Basic warehouse operations and inventory',
+    name: 'Payroll Manager',
+    description: 'Payroll processing, salary structure and financial reporting',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Finance Manager',
-    description: 'Financial reporting and budget management',
+    name: 'Payroll Staff',
+    description: 'Payroll data entry and processing operations',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Finance Staff',
-    description: 'Basic financial operations and data entry',
+    name: 'Attendance Manager',
+    description: 'Attendance tracking, leave management and reporting',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Technician',
-    description:
-      'Technician role with maintenance and installation permissions',
+    name: 'Department Head',
+    description: 'Department management with team oversight and approvals',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Sales Person',
-    description:
-      'Sales person role with sales and customer interaction permissions',
+    name: 'Supervisor',
+    description: 'Team supervision with attendance and leave approvals',
     is_active: 'Y',
     permissions: ['*'],
   },
   {
-    name: 'Merchandiser',
-    description:
-      'Merchandiser role with merchandising and product display permissions',
+    name: 'Employee',
+    description: 'Employee self-service for attendance, leaves and profile',
     is_active: 'Y',
     permissions: ['*'],
   },

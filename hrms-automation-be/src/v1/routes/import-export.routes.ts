@@ -1,57 +1,47 @@
 import { Router } from 'express';
-import { importExportController } from '../controllers/import-export.controller';
-
-import {
-  validateTemplate,
-  validateImport,
-  validateExport,
-} from '../validations/import-export.validation';
 import {
   authenticateToken,
   requirePermission,
 } from '../../middlewares/auth.middleware';
-import { uploadExcel } from '../../utils/multer';
+import { importExportController } from '../controllers/import-export.controller';
+import { upload } from '../../utils/multer';
 
 const router = Router();
 
 router.get(
-  '/import-export/tables',
+  '/export/template/:table',
   authenticateToken,
   requirePermission([{ module: 'report', action: 'read' }]),
-  importExportController.getSupportedTables
+  importExportController.exportTemplate
 );
 
 router.get(
-  '/import-export/:table/template',
+  '/export/data/:table',
   authenticateToken,
   requirePermission([{ module: 'report', action: 'read' }]),
-  validateTemplate,
-  importExportController.downloadTemplate
+  importExportController.exportData
 );
 
 router.post(
-  '/import-export/:table/import',
+  '/import/preview/:table',
   authenticateToken,
+  upload.single('file'),
   requirePermission([{ module: 'report', action: 'create' }]),
-  uploadExcel.single('file'),
-  validateImport,
+  importExportController.previewImport
+);
+
+router.post(
+  '/import/data/:table',
+  authenticateToken,
+  upload.single('file'),
+  requirePermission([{ module: 'report', action: 'create' }]),
   importExportController.importData
 );
 
 router.get(
-  '/import-export/:table/export/excel',
+  '/import-export/supported-tables',
   authenticateToken,
-  requirePermission([{ module: 'report', action: 'read' }]),
-  validateExport,
-  importExportController.exportToExcel
-);
-
-router.get(
-  '/import-export/:table/export/pdf',
-  authenticateToken,
-  requirePermission([{ module: 'report', action: 'read' }]),
-  validateExport,
-  importExportController.exportToPDF
+  importExportController.getSupportedTables
 );
 
 export default router;

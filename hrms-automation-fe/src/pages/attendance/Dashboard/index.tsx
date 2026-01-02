@@ -77,10 +77,10 @@ const AttendanceDashboard: React.FC = () => {
       limit: 1000,
     });
 
-  const employees = employeesResponse?.data || [];
-  const attendanceRecords = attendanceResponse?.data || [];
-  const leaveApplications = leaveApplicationsResponse?.data || [];
-  const leaveBalances = leaveBalancesResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data) ? employeesResponse.data : [];
+  const attendanceRecords = Array.isArray(attendanceResponse?.data) ? attendanceResponse.data : [];
+  const leaveApplications = Array.isArray(leaveApplicationsResponse?.data) ? leaveApplicationsResponse.data : [];
+  const leaveBalances = Array.isArray(leaveBalancesResponse?.data) ? leaveBalancesResponse.data : [];
 
   const stats = useMemo(() => {
     const totalEmployees = employees.length;
@@ -139,7 +139,7 @@ const AttendanceDashboard: React.FC = () => {
 
     const leaveApplicationsByType = leaveApplications.reduce(
       (acc, app) => {
-        acc[app.leave_type] = (acc[app.leave_type] || 0) + 1;
+        acc[app.leave_type_name || 'Unknown'] = (acc[app.leave_type_name || 'Unknown'] || 0) + 1;
         return acc;
       },
       {} as Record<string, number>
@@ -510,7 +510,7 @@ const AttendanceDashboard: React.FC = () => {
                 label: 'Punch In',
                 render: (_value, row: AttendanceRecord) => (
                   <Typography variant="body2" className="!text-gray-900">
-                    {row.punch_in_time || '-'}
+                    {row.punch_in_time ? dayjs(row.punch_in_time).format('HH:mm') : '-'}
                   </Typography>
                 ),
               },
@@ -547,7 +547,7 @@ const AttendanceDashboard: React.FC = () => {
                 label: 'Leave Type',
                 render: (_value, row: LeaveApplication) => (
                   <Typography variant="body2" className="!text-gray-900">
-                    {row.leave_type}
+                    {row.leave_type_name}
                   </Typography>
                 ),
               },

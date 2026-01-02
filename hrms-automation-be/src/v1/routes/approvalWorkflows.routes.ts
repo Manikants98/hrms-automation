@@ -1,36 +1,38 @@
 import { Router } from 'express';
-import { approvalWorkflowsController } from '../controllers/approvalWorkflows.controller';
 import {
   authenticateToken,
   requirePermission,
 } from '../../middlewares/auth.middleware';
-import { auditUpdate } from '../../middlewares/audit.middleware';
+import { approvalWorkflowsController } from '../controllers/approvalWorkflows.controller';
 
 const router = Router();
 
-router.use(authenticateToken);
-
 router.get(
   '/',
+  authenticateToken,
   requirePermission([{ module: 'approval', action: 'read' }]),
   approvalWorkflowsController.getApprovalWorkflows
 );
+
 router.get(
   '/:id',
+  authenticateToken,
   requirePermission([{ module: 'approval', action: 'read' }]),
   approvalWorkflowsController.getApprovalWorkflowById
 );
+
 router.post(
   '/:id/approve',
-  auditUpdate('workflow_steps'),
+  authenticateToken,
   requirePermission([{ module: 'approval', action: 'update' }]),
-  approvalWorkflowsController.approveWorkflowStep
+  approvalWorkflowsController.approveWorkflow
 );
+
 router.post(
   '/:id/reject',
-  auditUpdate('workflow_steps'),
+  authenticateToken,
   requirePermission([{ module: 'approval', action: 'update' }]),
-  approvalWorkflowsController.rejectWorkflowStep
+  approvalWorkflowsController.rejectWorkflow
 );
 
 export default router;

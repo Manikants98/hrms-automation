@@ -15,17 +15,12 @@ const generateTokens = (user: any) => {
     email: user.email,
     role: user.user_role?.name || user.role,
     parent_id: user.parent_id,
-    depot_id: user.depot_id,
-    zone_id: user.zone_id,
+    department_id: user.department_id,
+    designation_id: user.designation_id,
   };
 
-  const accessToken = jwt.sign(payload, jwtConfig.secret, {
-    expiresIn: jwtConfig.expiresIn,
-  });
-
-  const refreshToken = jwt.sign({ id: user.id }, jwtConfig.secret, {
-    expiresIn: jwtConfig.refreshExpiresIn,
-  });
+  const accessToken = jwt.sign(payload, jwtConfig.secret);
+  const refreshToken = jwt.sign({ id: user.id }, jwtConfig.secret);
 
   return { accessToken, refreshToken };
 };

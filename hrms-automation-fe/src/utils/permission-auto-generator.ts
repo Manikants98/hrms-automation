@@ -69,6 +69,18 @@ export const BACKEND_MODULES = [
   'login-history',
   'token',
   'setting',
+  // HRMS modules
+  'hiring-stages',
+  'job-postings',
+  'candidates',
+  'employees',
+  'attendance',
+  'leave-application',
+  'leave-balance',
+  'salary-structure',
+  'payroll-processing',
+  'salary-slips',
+  'audit-logs',
 ] as const;
 
 export type BackendModule = (typeof BACKEND_MODULES)[number];
@@ -145,6 +157,18 @@ const MANUAL_PERMISSION_OVERRIDES: Record<string, BackendModule> = {
   'login-history': 'login-history',
   'api-tokens': 'token',
   'system-settings': 'setting',
+  // HRMS manual overrides
+  'hiring-stages': 'hiring-stages',
+  'job-postings': 'job-postings',
+  'candidates': 'candidates',
+  'employees': 'employees',
+  'attendance': 'attendance',
+  'leave-application': 'leave-application',
+  'leave-balance': 'leave-balance',
+  'salary-structure': 'salary-structure',
+  'payroll-processing': 'payroll-processing',
+  'salary-slips': 'salary-slips',
+  'audit-logs': 'audit-logs',
 };
 
 /**

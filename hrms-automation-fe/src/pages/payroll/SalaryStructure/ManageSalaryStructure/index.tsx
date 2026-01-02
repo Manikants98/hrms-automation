@@ -113,6 +113,7 @@ const ManageSalaryStructure: React.FC<ManageSalaryStructureProps> = ({
             category: item.category,
             is_default: item.is_default,
           })),
+          is_active: values.statusField as 'Y' | 'N',
         };
 
         if (isEdit && selectedSalaryStructure) {

@@ -56,7 +56,9 @@ const EmployeesPage: React.FC = () => {
     }
   );
 
-  const employees = employeesResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data)
+    ? employeesResponse.data
+    : [];
   const totalCount = employeesResponse?.meta?.total_count || 0;
   const currentPage = (employeesResponse?.meta?.current_page || 1) - 1;
 
@@ -189,19 +191,19 @@ const EmployeesPage: React.FC = () => {
       ),
     },
     {
-      id: 'reporting_manager_name',
-      label: 'Reporting Manager',
+      id: 'department_name',
+      label: 'Department',
       render: (_value, row) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.reporting_manager_name || '-'}
+          {row.department_name || '-'}
         </Typography>
       ),
     },
     {
-      id: 'joining_date',
+      id: 'date_of_joining',
       label: 'Joining Date',
       render: (_value, row) =>
-        formatDate(row.joining_date) || (
+        formatDate(row.date_of_joining) || (
           <span className="italic text-gray-400">No Date</span>
         ),
     },
@@ -210,9 +212,7 @@ const EmployeesPage: React.FC = () => {
       label: 'Salary',
       render: (_value, row) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.salary && row.currency_code
-            ? `${row.currency_code} ${row.salary.toLocaleString()}`
-            : '-'}
+          {row.salary ? `${row.salary.toLocaleString()}` : '-'}
         </Typography>
       ),
     },

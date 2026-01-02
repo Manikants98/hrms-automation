@@ -2,8 +2,8 @@ import dotenv from 'dotenv';
 import { createApp } from './app';
 import logger from './configs/logger';
 import { killPort, isPortInUse } from './utils/killPort';
-import { AttendanceCronService } from './v1/services/attendance.cron.service';
-dotenv.config({ quiet: true });
+
+dotenv.config();
 
 const port = Number(process.env.PORT) || 4000;
 
@@ -22,9 +22,7 @@ export const startServer = async () => {
     }
 
     const server = app.listen(port, '0.0.0.0', async () => {
-      AttendanceCronService.startAutoPunchOut();
-      AttendanceCronService.startMidnightStatusReset();
-      logger.info('Attendance cron jobs started');
+      logger.info('HRMS Backend started');
       logger.success(`Server running at http://0.0.0.0:${port}`);
     });
 

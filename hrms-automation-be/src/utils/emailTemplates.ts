@@ -1,168 +1,87 @@
-import prisma from '../configs/prisma.client';
-
 interface EmailVariables {
   [key: string]: any;
 }
 
-interface EmailTemplate {
-  subject: string;
-  body: string;
-}
-
-const formatRequestType = (type?: string): string => {
-  if (!type) return '';
-  return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-};
-
-const renderDetailsHtml = (request_detail?: any): string => {
-  if (!request_detail) return '';
-
-  let html = `<h4 style="margin: 0; margin-bottom: 5px;">Request Details:</h4><ul style="margin: 0; padding-left: 10px;">`;
-
-  for (const [key, value] of Object.entries(request_detail)) {
-    const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-
-    let formatted: string;
-    if (value instanceof Date) {
-      formatted = value.toLocaleDateString('en-IN', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      });
-    } else {
-      formatted = value?.toString() ?? 'N/A';
-    }
-
-    html += `<li style="margin: 0; line-height: 1.2;"><strong>${label}:</strong> ${formatted}</li>`;
-  }
-
-  html += `</ul>`;
-  return html;
-};
-
-const extractPlaceholders = (str: string): string[] => {
-  const matches = str.match(/\$\{\s*(\w+)\s*\}|\{\{\s*(\w+)\s*\}\}/g) || [];
-  return matches.map(m => m.replace(/\$\{|\{|\}|\s/g, ''));
-};
-
-const autoMapVariables = (
-  template: { subject?: string; body?: string },
-  vars: EmailVariables
-): EmailVariables => {
-  const placeholders = [
-    ...extractPlaceholders(template.subject || ''),
-    ...extractPlaceholders(template.body || ''),
-  ];
-
-  const mapped: EmailVariables = { ...vars };
-
-  placeholders.forEach(key => {
-    if (!mapped[key]) {
-      const aliasMap: { [key: string]: string[] } = {
-        employee_name: [
-          'employee_name',
-          'staff_name',
-          'candidate_name',
-          'user_name',
-        ],
-        candidate_name: ['candidate_name'],
-        requester_name: [
-          'applicant_name',
-          'initiator_name',
-          'salesperson_name',
-        ],
-        user_name: ['user_name'],
-        approver_name: ['manager_name', 'reviewer_name'],
-        days: ['remaining_days', 'days'],
-        customer_name: ['customer_name', 'client_name'],
-        order_number: ['order_number', 'order_no'],
-        total_amount: ['total_amount', 'amount', 'order_amount'],
-      };
-
-      if (aliasMap[key]) {
-        const alias = aliasMap[key].find(a => vars[a] !== undefined);
-        if (alias) {
-          mapped[key] = vars[alias];
-          return;
-        }
-      }
-
-      const candidate = Object.keys(vars).find(
-        k =>
-          k.toLowerCase().includes(key.toLowerCase().split('_')[0]) ||
-          key.toLowerCase().includes(k.toLowerCase().split('_')[0])
-      );
-
-      if (candidate) {
-        mapped[key] = vars[candidate];
-      }
-    }
-  });
-
-  return mapped;
-};
-
 export const generateEmailContent = async (
-  key: string,
-  variables: EmailVariables = {}
-): Promise<EmailTemplate> => {
-  console.log(' generateEmailContent called with:');
-  console.log('  Key:', key);
-  console.log('  Variables:', variables);
+  templateKey: string,
+  variables: EmailVariables
+): Promise<{ subject: string; body: string } | null> => {
+  console.log('Generating email content for template:', templateKey);
+  console.log('Variables:', variables);
 
-  try {
-    const template = await prisma.sfa_d_templates.findUnique({
-      where: { key },
-    });
+  const templates: Record<string, { subject: string; body: string }> = {
+    LEAVE_APPLICATION_SUBMITTED: {
+      subject: 'Leave Application Submitted',
+      body: `
+        <h2>Leave Application Submitted</h2>
+        <p>A leave application has been submitted and is pending approval.</p>
+        <p><strong>Employee:</strong> ${variables.employee_name || 'N/A'}</p>
+        <p><strong>Leave Type:</strong> ${variables.leave_type || 'N/A'}</p>
+        <p><strong>Duration:</strong> ${variables.start_date || 'N/A'} to ${variables.end_date || 'N/A'}</p>
+        <p><strong>Reason:</strong> ${variables.reason || 'N/A'}</p>
+      `,
+    },
+    LEAVE_APPLICATION_APPROVED: {
+      subject: 'Leave Application Approved',
+      body: `
+        <h2>Leave Application Approved</h2>
+        <p>Your leave application has been approved.</p>
+        <p><strong>Leave Type:</strong> ${variables.leave_type || 'N/A'}</p>
+        <p><strong>Duration:</strong> ${variables.start_date || 'N/A'} to ${variables.end_date || 'N/A'}</p>
+        <p><strong>Approved By:</strong> ${variables.approved_by_name || 'N/A'}</p>
+      `,
+    },
+    LEAVE_APPLICATION_REJECTED: {
+      subject: 'Leave Application Rejected',
+      body: `
+        <h2>Leave Application Rejected</h2>
+        <p>Your leave application has been rejected.</p>
+        <p><strong>Leave Type:</strong> ${variables.leave_type || 'N/A'}</p>
+        <p><strong>Duration:</strong> ${variables.start_date || 'N/A'} to ${variables.end_date || 'N/A'}</p>
+        <p><strong>Rejection Reason:</strong> ${variables.rejection_reason || 'N/A'}</p>
+      `,
+    },
+    PAYROLL_PROCESSED: {
+      subject: 'Payroll Processed',
+      body: `
+        <h2>Payroll Processed</h2>
+        <p>Your salary for ${variables.payroll_month || 'N/A'}/${variables.payroll_year || 'N/A'} has been processed.</p>
+        <p><strong>Net Salary:</strong> ${variables.currency || '₹'}${variables.net_salary || '0'}</p>
+        <p><strong>Status:</strong> ${variables.status || 'Processed'}</p>
+        <p>Please check your salary slip for detailed breakdown.</p>
+      `,
+    },
+    CANDIDATE_APPLICATION_RECEIVED: {
+      subject: 'Application Received',
+      body: `
+        <h2>Application Received</h2>
+        <p>Thank you for applying for the position.</p>
+        <p><strong>Job Title:</strong> ${variables.job_title || 'N/A'}</p>
+        <p><strong>Application Date:</strong> ${variables.application_date || 'N/A'}</p>
+        <p>We will review your application and get back to you soon.</p>
+      `,
+    },
+    WELCOME_EMAIL: {
+      subject: 'Welcome to HRMS',
+      body: `
+        <h2>Welcome to HRMS</h2>
+        <p>Dear ${variables.name || 'Employee'},</p>
+        <p>Welcome to our Human Resource Management System!</p>
+        <p><strong>Email:</strong> ${variables.email || 'N/A'}</p>
+        <p><strong>Employee ID:</strong> ${variables.employee_id || 'N/A'}</p>
+        <p>Please login to access your account and update your profile.</p>
+      `,
+    },
+  };
 
-    if (!template) {
-      console.error(`Template not found for key: ${key}`);
-      throw new Error(`Email template with key "${key}" not found.`);
-    }
-
-    const normalizedVars = autoMapVariables(template, variables);
-
-    const computedVars: EmailVariables = {
-      ...normalizedVars,
-      request_type: formatRequestType(normalizedVars.request_type),
-      request_detail: renderDetailsHtml(normalizedVars.request_detail),
-    };
-
-    const render = (str?: string): string => {
-      if (!str) return '';
-
-      let rendered = str;
-      rendered = rendered.replace(/\$\{\s*(\w+)\s*\}/g, (_, key) => {
-        const value = computedVars[key];
-        return value?.toString() || '';
-      });
-
-      rendered = rendered.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
-        const value = computedVars[key];
-        return value?.toString() || '';
-      });
-
-      return rendered;
-    };
-
-    const result: EmailTemplate = {
-      subject: render(template.subject),
-      body: render(template.body),
-    };
-
-    console.log(' Email template rendered successfully');
-    return result;
-  } catch (error: any) {
-    console.error(' Error generating email content:', error);
-    throw error;
+  const template = templates[templateKey];
+  
+  if (!template) {
+    console.error(`Template not found for key: ${templateKey}`);
+    return null;
   }
-};
 
-export {
-  formatRequestType,
-  renderDetailsHtml,
-  extractPlaceholders,
-  autoMapVariables,
+  return template;
 };
 
 export default generateEmailContent;

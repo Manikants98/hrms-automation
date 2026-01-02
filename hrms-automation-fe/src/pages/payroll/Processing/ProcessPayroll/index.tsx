@@ -81,9 +81,9 @@ const ProcessPayroll: React.FC<ProcessPayrollProps> = ({
     limit: 1000,
   });
 
-  const employees = employeesResponse?.data || [];
-  const salaryStructures = salaryStructuresResponse?.data || [];
-  const leaveApplications = leaveApplicationsResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data) ? employeesResponse.data : [];
+  const salaryStructures = Array.isArray(salaryStructuresResponse?.data) ? salaryStructuresResponse.data : [];
+  const leaveApplications = Array.isArray(leaveApplicationsResponse?.data) ? leaveApplicationsResponse.data : [];
 
   const payrollCalculations = useMemo(() => {
     if (!formik.values.payroll_month || !formik.values.payroll_year) {

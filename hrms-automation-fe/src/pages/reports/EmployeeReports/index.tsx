@@ -44,7 +44,9 @@ const EmployeeReports: React.FC = () => {
     }
   );
 
-  const employees = employeesResponse?.data || [];
+  const employees = Array.isArray(employeesResponse?.data)
+    ? employeesResponse.data
+    : [];
 
   const filteredEmployees = useMemo(() => {
     let filtered = [...employees];
@@ -52,8 +54,8 @@ const EmployeeReports: React.FC = () => {
     if (joiningDateFrom) {
       filtered = filtered.filter(
         emp =>
-          emp.joining_date &&
-          dayjs(emp.joining_date).isAfter(
+          emp.date_of_joining &&
+          dayjs(emp.date_of_joining).isAfter(
             dayjs(joiningDateFrom).subtract(1, 'day')
           )
       );
@@ -62,8 +64,10 @@ const EmployeeReports: React.FC = () => {
     if (joiningDateTo) {
       filtered = filtered.filter(
         emp =>
-          emp.joining_date &&
-          dayjs(emp.joining_date).isBefore(dayjs(joiningDateTo).add(1, 'day'))
+          emp.date_of_joining &&
+          dayjs(emp.date_of_joining).isBefore(
+            dayjs(joiningDateTo).add(1, 'day')
+          )
       );
     }
 
@@ -115,17 +119,18 @@ const EmployeeReports: React.FC = () => {
     );
 
     const totalSalary = filteredEmployees.reduce(
-      (sum, emp) => sum + (emp.salary || 0),
+      (sum, emp) => sum + (Number(emp.salary) || 0),
       0
     );
+    console.log(totalSalary, totalEmployees);
     const averageSalary =
       totalEmployees > 0
         ? Math.round(totalSalary / totalEmployees).toLocaleString()
         : '0';
 
     const newEmployeesThisMonth = filteredEmployees.filter(emp => {
-      if (!emp.joining_date) return false;
-      const joiningDate = dayjs(emp.joining_date);
+      if (!emp.date_of_joining) return false;
+      const joiningDate = dayjs(emp.date_of_joining);
       const now = dayjs();
       return (
         joiningDate.month() === now.month() && joiningDate.year() === now.year()
@@ -261,20 +266,11 @@ const EmployeeReports: React.FC = () => {
       ),
     },
     {
-      id: 'reporting_manager_name',
-      label: 'Reporting Manager',
-      render: (_value, row) => (
-        <Typography variant="body2" className="!text-gray-900">
-          {row.reporting_manager_name || '-'}
-        </Typography>
-      ),
-    },
-    {
-      id: 'joining_date',
+      id: 'date_of_joining',
       label: 'Joining Date',
       render: (_value, row) => (
         <Typography variant="body2" className="!text-gray-900">
-          {formatDate(row.joining_date) || '-'}
+          {formatDate(row.date_of_joining) || '-'}
         </Typography>
       ),
     },
@@ -283,9 +279,7 @@ const EmployeeReports: React.FC = () => {
       label: 'Salary',
       render: (_value, row) => (
         <Typography variant="body2" className="!font-medium !text-gray-900">
-          {row.salary && row.currency_code
-            ? `${row.currency_code} ${row.salary.toLocaleString()}`
-            : '-'}
+          {row.salary ? `INR ${row.salary.toLocaleString()}` : '-'}
         </Typography>
       ),
     },
