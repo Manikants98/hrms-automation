@@ -399,19 +399,16 @@ const ManageJobPosting: React.FC<ManageJobPostingProps> = ({
                 Hiring Stage
               </Typography>
               <Box className="!grid !grid-cols-1 md:!grid-cols-2 !gap-4">
-                <Box className="!border !border-gray-200 !rounded-lg !p-4">
-                  <Box className="!flex !items-center !justify-between !mb-3">
+                <Box className="!border !border-gray-200 !rounded-lg pt-2 px-2">
+                  <Box className="!flex !items-center !justify-between">
                     <Typography variant="subtitle1" className="!font-medium">
                       Available Hiring Stages
                     </Typography>
-                    <Badge
-                      badgeContent={availableHiringStagesForSelection.length}
-                      color="primary"
-                    />
                   </Box>
-                  <Typography variant="body2" className="!text-gray-600 !mb-3">
+                  <Typography variant="subtitle1" className="!text-gray-600">
                     Drag stages to add to sequence
                   </Typography>
+
                   <TableContainer component={Paper} variant="outlined">
                     <Table size="small">
                       <TableHead>

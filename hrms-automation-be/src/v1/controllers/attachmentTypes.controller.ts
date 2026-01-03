@@ -52,7 +52,11 @@ export const attachmentTypesController = {
         },
       });
 
-      res.success('Attachment type created successfully', serializeAttachmentType(attachmentType), 201);
+      res.success(
+        'Attachment type created successfully',
+        serializeAttachmentType(attachmentType),
+        201
+      );
     } catch (error: any) {
       console.error('Create attachment type error:', error);
       res.error(error.message || 'Failed to create attachment type', 500);
@@ -89,12 +93,16 @@ export const attachmentTypesController = {
       });
 
       const total = await prisma.attachment_types.count();
-      const active = await prisma.attachment_types.count({ where: { is_active: 'Y' } });
-      const inactive = await prisma.attachment_types.count({ where: { is_active: 'N' } });
+      const active = await prisma.attachment_types.count({
+        where: { is_active: 'Y' },
+      });
+      const inactive = await prisma.attachment_types.count({
+        where: { is_active: 'N' },
+      });
 
       res.success(
-        data.map(serializeAttachmentType),
         'Attachment types fetched successfully',
+        data.map(serializeAttachmentType),
         200,
         {
           ...pagination,
@@ -124,7 +132,10 @@ export const attachmentTypesController = {
         return;
       }
 
-      res.success('Attachment type fetched successfully', serializeAttachmentType(attachmentType));
+      res.success(
+        'Attachment type fetched successfully',
+        serializeAttachmentType(attachmentType)
+      );
     } catch (error: any) {
       console.error('Get attachment type error:', error);
       res.error(error.message || 'Failed to fetch attachment type', 500);
@@ -183,7 +194,10 @@ export const attachmentTypesController = {
         },
       });
 
-      res.success('Attachment type updated successfully', serializeAttachmentType(attachmentType));
+      res.success(
+        'Attachment type updated successfully',
+        serializeAttachmentType(attachmentType)
+      );
     } catch (error: any) {
       console.error('Update attachment type error:', error);
       res.error(error.message || 'Failed to update attachment type', 500);
@@ -238,10 +252,16 @@ export const attachmentTypesController = {
         take: 100,
       });
 
-      res.success('Attachment types dropdown fetched successfully', attachmentTypes);
+      res.success(
+        'Attachment types dropdown fetched successfully',
+        attachmentTypes
+      );
     } catch (error: any) {
       console.error('Get attachment types dropdown error:', error);
-      res.error(error.message || 'Failed to fetch attachment types dropdown', 500);
+      res.error(
+        error.message || 'Failed to fetch attachment types dropdown',
+        500
+      );
     }
   },
 };

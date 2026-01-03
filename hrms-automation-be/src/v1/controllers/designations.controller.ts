@@ -70,7 +70,11 @@ export const designationsController = {
         },
       });
 
-      res.success('Designation created successfully', serializeDesignation(designation), 201);
+      res.success(
+        'Designation created successfully',
+        serializeDesignation(designation),
+        201
+      );
     } catch (error: any) {
       console.error('Create designation error:', error);
       res.error(error.message || 'Failed to create designation', 500);
@@ -79,7 +83,13 @@ export const designationsController = {
 
   async getDesignations(req: any, res: any): Promise<void> {
     try {
-      const { page = '1', limit = '10', search = '', isActive, department_id } = req.query;
+      const {
+        page = '1',
+        limit = '10',
+        search = '',
+        isActive,
+        department_id,
+      } = req.query;
 
       const page_num = parseInt(page as string, 10);
       const limit_num = parseInt(limit as string, 10);
@@ -120,12 +130,16 @@ export const designationsController = {
       });
 
       const total = await prisma.designations.count();
-      const active = await prisma.designations.count({ where: { is_active: 'Y' } });
-      const inactive = await prisma.designations.count({ where: { is_active: 'N' } });
+      const active = await prisma.designations.count({
+        where: { is_active: 'Y' },
+      });
+      const inactive = await prisma.designations.count({
+        where: { is_active: 'N' },
+      });
 
       res.success(
-        data.map(serializeDesignation),
         'Designations fetched successfully',
+        data.map(serializeDesignation),
         200,
         {
           ...pagination,
@@ -164,7 +178,10 @@ export const designationsController = {
         return;
       }
 
-      res.success('Designation fetched successfully', serializeDesignation(designation));
+      res.success(
+        'Designation fetched successfully',
+        serializeDesignation(designation)
+      );
     } catch (error: any) {
       console.error('Get designation error:', error);
       res.error(error.message || 'Failed to fetch designation', 500);
@@ -233,7 +250,10 @@ export const designationsController = {
         },
       });
 
-      res.success('Designation updated successfully', serializeDesignation(designation));
+      res.success(
+        'Designation updated successfully',
+        serializeDesignation(designation)
+      );
     } catch (error: any) {
       console.error('Update designation error:', error);
       res.error(error.message || 'Failed to update designation', 500);

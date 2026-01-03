@@ -24,7 +24,15 @@ export const shiftsController = {
         return;
       }
 
-      const { name, code, start_time, end_time, break_duration, description, is_active } = req.body;
+      const {
+        name,
+        code,
+        start_time,
+        end_time,
+        break_duration,
+        description,
+        is_active,
+      } = req.body;
 
       const existingCode = await prisma.shifts.findUnique({
         where: { code },
@@ -99,8 +107,8 @@ export const shiftsController = {
       const inactive = await prisma.shifts.count({ where: { is_active: 'N' } });
 
       res.success(
-        data.map(serializeShift),
         'Shifts fetched successfully',
+        data.map(serializeShift),
         200,
         {
           ...pagination,
@@ -146,7 +154,15 @@ export const shiftsController = {
       }
 
       const { id } = req.params;
-      const { name, code, start_time, end_time, break_duration, description, is_active } = req.body;
+      const {
+        name,
+        code,
+        start_time,
+        end_time,
+        break_duration,
+        description,
+        is_active,
+      } = req.body;
 
       const existing = await prisma.shifts.findUnique({
         where: { id: parseInt(id) },

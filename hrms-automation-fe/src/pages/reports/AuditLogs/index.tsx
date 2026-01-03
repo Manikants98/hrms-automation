@@ -3,7 +3,6 @@ import { useAuditLogs } from 'hooks/useAuditLogs';
 import { usePermission } from 'hooks/usePermission';
 import { useUsers } from 'hooks/useUsers';
 import {
-  AlertCircle,
   Database,
   FileText,
   History,
@@ -230,7 +229,7 @@ const ActivityLogs: React.FC = () => {
       )}
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatsCard
           title="Total Logs"
           value={statistics.total_logs}
@@ -274,16 +273,6 @@ const ActivityLogs: React.FC = () => {
         onPageChange={(newPage: number) => setPage(newPage + 1)}
         isPermission={isRead}
       />
-
-      {logs.length === 0 && !isLoading && (
-        <div className="text-center py-12">
-          <AlertCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">No audit logs found</p>
-          <p className="text-gray-400 text-sm mt-2">
-            Please adjust your filters to view audit logs
-          </p>
-        </div>
-      )}
     </div>
   );
 };

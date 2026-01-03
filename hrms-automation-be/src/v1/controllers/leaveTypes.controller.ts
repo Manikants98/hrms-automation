@@ -24,7 +24,15 @@ export const leaveTypesController = {
         return;
       }
 
-      const { name, code, max_days_per_year, is_paid, requires_approval, description, is_active } = req.body;
+      const {
+        name,
+        code,
+        max_days_per_year,
+        is_paid,
+        requires_approval,
+        description,
+        is_active,
+      } = req.body;
 
       const existingCode = await prisma.leave_types.findUnique({
         where: { code },
@@ -58,7 +66,11 @@ export const leaveTypesController = {
         },
       });
 
-      res.success('Leave type created successfully', serializeLeaveType(leaveType), 201);
+      res.success(
+        'Leave type created successfully',
+        serializeLeaveType(leaveType),
+        201
+      );
     } catch (error: any) {
       console.error('Create leave type error:', error);
       res.error(error.message || 'Failed to create leave type', 500);
@@ -95,12 +107,16 @@ export const leaveTypesController = {
       });
 
       const total = await prisma.leave_types.count();
-      const active = await prisma.leave_types.count({ where: { is_active: 'Y' } });
-      const inactive = await prisma.leave_types.count({ where: { is_active: 'N' } });
+      const active = await prisma.leave_types.count({
+        where: { is_active: 'Y' },
+      });
+      const inactive = await prisma.leave_types.count({
+        where: { is_active: 'N' },
+      });
 
       res.success(
-        data.map(serializeLeaveType),
         'Leave types fetched successfully',
+        data.map(serializeLeaveType),
         200,
         {
           ...pagination,
@@ -130,7 +146,10 @@ export const leaveTypesController = {
         return;
       }
 
-      res.success('Leave type fetched successfully', serializeLeaveType(leaveType));
+      res.success(
+        'Leave type fetched successfully',
+        serializeLeaveType(leaveType)
+      );
     } catch (error: any) {
       console.error('Get leave type error:', error);
       res.error(error.message || 'Failed to fetch leave type', 500);
@@ -146,7 +165,15 @@ export const leaveTypesController = {
       }
 
       const { id } = req.params;
-      const { name, code, max_days_per_year, is_paid, requires_approval, description, is_active } = req.body;
+      const {
+        name,
+        code,
+        max_days_per_year,
+        is_paid,
+        requires_approval,
+        description,
+        is_active,
+      } = req.body;
 
       const existing = await prisma.leave_types.findUnique({
         where: { id: parseInt(id) },
@@ -192,7 +219,10 @@ export const leaveTypesController = {
         },
       });
 
-      res.success('Leave type updated successfully', serializeLeaveType(leaveType));
+      res.success(
+        'Leave type updated successfully',
+        serializeLeaveType(leaveType)
+      );
     } catch (error: any) {
       console.error('Update leave type error:', error);
       res.error(error.message || 'Failed to update leave type', 500);

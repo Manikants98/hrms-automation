@@ -103,8 +103,8 @@ export const hiringStagesController = {
       });
 
       res.success(
-        data.map(serializeHiringStage),
         'Hiring stages fetched successfully',
+        data.map(serializeHiringStage),
         200,
         {
           ...pagination,
