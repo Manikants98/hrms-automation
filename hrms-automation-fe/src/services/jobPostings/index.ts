@@ -21,6 +21,7 @@ export interface JobPosting {
   hiring_stages?: Array<{
     hiring_stage_id: number;
     sequence: number;
+    description: string
     name: string;
     hiring_stage_name: string;
     hiring_stage_code: string;
@@ -29,6 +30,7 @@ export interface JobPosting {
     attachment_type_name: any;
     attachment_type_id: any;
     id: number;
+    description?: string
     name: string;
     sequence: number;
   }>;

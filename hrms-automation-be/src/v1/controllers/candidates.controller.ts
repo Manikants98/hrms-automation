@@ -76,7 +76,9 @@ export const candidatesController = {
           current_hiring_stage_id,
           resume_url,
           cover_letter_url,
-          application_date: application_date ? new Date(application_date) : new Date(),
+          application_date: application_date
+            ? new Date(application_date)
+            : new Date(),
           status: status || 'Applied',
           notes,
           experience_years,
@@ -84,7 +86,9 @@ export const candidatesController = {
           expected_salary,
           current_salary,
           notice_period,
-          availability_date: availability_date ? new Date(availability_date) : null,
+          availability_date: availability_date
+            ? new Date(availability_date)
+            : null,
           is_active: is_active || 'Y',
           createdby: req.user?.id || 1,
           updatedby: req.user?.id || 1,
@@ -106,7 +110,11 @@ export const candidatesController = {
         },
       });
 
-      res.success('Candidate created successfully', serializeCandidate(candidate), 201);
+      res.success(
+        'Candidate created successfully',
+        serializeCandidate(candidate),
+        201
+      );
     } catch (error: any) {
       console.error('Create candidate error:', error);
       res.error(error.message || 'Failed to create candidate', 500);
@@ -115,7 +123,15 @@ export const candidatesController = {
 
   async getCandidates(req: any, res: any): Promise<void> {
     try {
-      const { page = '1', limit = '10', search = '', isActive, job_posting_id, status, current_hiring_stage_id } = req.query;
+      const {
+        page = '1',
+        limit = '10',
+        search = '',
+        isActive,
+        job_posting_id,
+        status,
+        current_hiring_stage_id,
+      } = req.query;
 
       const page_num = parseInt(page as string, 10);
       const limit_num = parseInt(limit as string, 10);
@@ -136,7 +152,9 @@ export const candidatesController = {
       }
 
       if (current_hiring_stage_id) {
-        filters.current_hiring_stage_id = parseInt(current_hiring_stage_id as string);
+        filters.current_hiring_stage_id = parseInt(
+          current_hiring_stage_id as string
+        );
       }
 
       if (search) {
@@ -172,13 +190,17 @@ export const candidatesController = {
       });
 
       const total = await prisma.candidates.count();
-      const active = await prisma.candidates.count({ where: { is_active: 'Y' } });
-      const inactive = await prisma.candidates.count({ where: { is_active: 'N' } });
-      const byStatus = await prisma.$queryRaw`
+      const active = await prisma.candidates.count({
+        where: { is_active: 'Y' },
+      });
+      const inactive = await prisma.candidates.count({
+        where: { is_active: 'N' },
+      });
+      const byStatus = (await prisma.$queryRaw`
         SELECT status, COUNT(*)::int as count
         FROM candidates
         GROUP BY status
-      ` as { status: string; count: number }[];
+      `) as { status: string; count: number }[];
 
       res.success(
         'Candidates fetched successfully',
@@ -190,10 +212,13 @@ export const candidatesController = {
             total_candidates: total,
             active_candidates: active,
             inactive_candidates: inactive,
-            by_status: byStatus.reduce((acc, item) => {
-              acc[item.status] = item.count;
-              return acc;
-            }, {} as Record<string, number>),
+            by_status: byStatus.reduce(
+              (acc, item) => {
+                acc[item.status] = item.count;
+                return acc;
+              },
+              {} as Record<string, number>
+            ),
           },
         }
       );
@@ -233,7 +258,10 @@ export const candidatesController = {
         return;
       }
 
-      res.success('Candidate fetched successfully', serializeCandidate(candidate));
+      res.success(
+        'Candidate fetched successfully',
+        serializeCandidate(candidate)
+      );
     } catch (error: any) {
       console.error('Get candidate error:', error);
       res.error(error.message || 'Failed to fetch candidate', 500);
@@ -288,7 +316,9 @@ export const candidatesController = {
           current_hiring_stage_id,
           resume_url,
           cover_letter_url,
-          application_date: application_date ? new Date(application_date) : undefined,
+          application_date: application_date
+            ? new Date(application_date)
+            : undefined,
           status,
           notes,
           experience_years,
@@ -296,7 +326,9 @@ export const candidatesController = {
           expected_salary,
           current_salary,
           notice_period,
-          availability_date: availability_date ? new Date(availability_date) : undefined,
+          availability_date: availability_date
+            ? new Date(availability_date)
+            : undefined,
           is_active,
           updatedby: req.user?.id || 1,
           updatedate: new Date(),
@@ -318,7 +350,10 @@ export const candidatesController = {
         },
       });
 
-      res.success('Candidate updated successfully', serializeCandidate(candidate));
+      res.success(
+        'Candidate updated successfully',
+        serializeCandidate(candidate)
+      );
     } catch (error: any) {
       console.error('Update candidate error:', error);
       res.error(error.message || 'Failed to update candidate', 500);
@@ -346,6 +381,39 @@ export const candidatesController = {
     } catch (error: any) {
       console.error('Delete candidate error:', error);
       res.error(error.message || 'Failed to delete candidate', 500);
+    }
+  },
+
+  async getCandidatesDropdown(req: any, res: any): Promise<void> {
+    try {
+      const { search = '' } = req.query;
+
+      const filters: any = { is_active: 'Y' };
+
+      if (search) {
+        filters.OR = [
+          { name: { contains: search as string, mode: 'insensitive' } },
+          { code: { contains: search as string, mode: 'insensitive' } },
+        ];
+      }
+
+      const candidates = await prisma.candidates.findMany({
+        where: filters,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone_number: true,
+          current_hiring_stage_id: true,
+        },
+        orderBy: { name: 'asc' },
+        take: 100,
+      });
+
+      res.success('Candidates dropdown fetched successfully', candidates);
+    } catch (error: any) {
+      console.error('Get candidates dropdown error:', error);
+      res.error(error.message || 'Failed to fetch candidates dropdown', 500);
     }
   },
 };

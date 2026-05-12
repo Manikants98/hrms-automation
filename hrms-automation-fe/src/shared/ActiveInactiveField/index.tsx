@@ -14,6 +14,7 @@ interface ActiveInactiveFieldProps {
   formik?: FormikProps<any>;
   name: string;
   label?: string;
+  labels?: Array<{ true: string; false: string }>;
   required?: boolean;
   className?: string;
   disabled?: boolean;
@@ -86,6 +87,7 @@ const ActiveInactiveField: React.FC<ActiveInactiveFieldProps> = ({
   formik,
   name,
   label = 'Status',
+  labels = [{ true: 'Active', false: 'Inactive' }],
   required = false,
   className = '',
   disabled = false,
@@ -132,13 +134,13 @@ const ActiveInactiveField: React.FC<ActiveInactiveFieldProps> = ({
         <FormControlLabel
           value="Y"
           control={<CustomRadio />}
-          label="Active"
+          label={labels[0].true}
           disabled={disabled}
         />
         <FormControlLabel
           value="N"
           control={<CustomRadio />}
-          label="Inactive"
+          label={labels[0].false}
           disabled={disabled}
         />
       </RadioGroup>

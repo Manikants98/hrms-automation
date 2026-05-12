@@ -1,13 +1,14 @@
 import { Add, Block, CheckCircle, Download, Upload } from '@mui/icons-material';
 import { Alert, Avatar, Box, MenuItem, Typography } from '@mui/material';
+import { useDepartmentsDropdown } from 'hooks/useDepartments';
 import {
-  useEmployees,
   useDeleteEmployee,
+  useEmployees,
   type Employee,
 } from 'hooks/useEmployees';
 import { useExportToExcel } from 'hooks/useImportExport';
 import { usePermission } from 'hooks/usePermission';
-import { User, TrendingUp, Users } from 'lucide-react';
+import { TrendingUp, Users } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { DeleteButton, EditButton } from 'shared/ActionButton';
 import Button from 'shared/Button';
@@ -55,6 +56,8 @@ const EmployeesPage: React.FC = () => {
       enabled: isRead !== false,
     }
   );
+
+  const { data: departmentsResponse } = useDepartmentsDropdown();
 
   const employees = Array.isArray(employeesResponse?.data)
     ? employeesResponse.data
@@ -136,10 +139,9 @@ const EmployeesPage: React.FC = () => {
         <Box className="!flex !gap-2 !items-center">
           <Avatar
             alt={row.name}
+            src='mkx'
             className="!rounded !bg-primary-100 !text-primary-500"
-          >
-            <User className="w-5 h-5" />
-          </Avatar>
+       />
           <Box className="!max-w-xs">
             <Typography
               variant="body1"
@@ -148,62 +150,53 @@ const EmployeesPage: React.FC = () => {
               {row.name}
             </Typography>
             <Typography variant="caption" className="!text-gray-500">
-              {row.email}
+              {row.employee_id}
             </Typography>
           </Box>
         </Box>
       ),
     },
     {
-      id: 'employee_id',
-      label: 'Employee ID',
+      id: 'email',
+      label: 'Email',
       render: (_value, row) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.employee_id || '-'}
+          {row.email || '-'}
         </Typography>
       ),
     },
     {
-      id: 'department_name',
+      id: 'department',
       label: 'Department',
-      render: (_value, row) => (
+      render: (value) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.department_name || '-'}
+          {value?.name || '-'}
         </Typography>
       ),
     },
     {
-      id: 'designation_name',
+      id: 'designation',
       label: 'Designation',
-      render: (_value, row) => (
+      render: (value) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.designation_name || '-'}
+          {value?.name || '-'}
         </Typography>
       ),
     },
     {
-      id: 'shift_name',
+      id: 'shift',
       label: 'Shift',
-      render: (_value, row) => (
+      render: (value) => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.shift_name || '-'}
+          {value?.name || '-'}
         </Typography>
       ),
     },
     {
-      id: 'department_name',
-      label: 'Department',
-      render: (_value, row) => (
-        <Typography variant="body2" className="!text-gray-900">
-          {row.department_name || '-'}
-        </Typography>
-      ),
-    },
-    {
-      id: 'date_of_joining',
+      id: 'joining_date',
       label: 'Joining Date',
-      render: (_value, row) =>
-        formatDate(row.date_of_joining) || (
+      render: (value) =>
+        value ? formatDate(value) : (
           <span className="italic text-gray-400">No Date</span>
         ),
     },
@@ -217,10 +210,10 @@ const EmployeesPage: React.FC = () => {
       ),
     },
     {
-      id: 'createdate',
+      id: 'created_at',
       label: 'Created Date',
-      render: (_value, row) =>
-        formatDate(row.createdate) || (
+      render: (value) =>
+        value ? formatDate(value) : (
           <span className="italic text-gray-400">No Date</span>
         ),
     },
@@ -316,33 +309,30 @@ const EmployeesPage: React.FC = () => {
                       onChange={handleSearchChange}
                       debounceMs={400}
                       showClear={true}
-                      className="!w-80"
                     />
                     <Select
                       value={statusFilter}
                       onChange={e => setStatusFilter(e.target.value)}
-                      className="!w-32"
                       size="small"
+                      placeholder="Status"
+                      className='!w-24'
                     >
-                      <MenuItem value="all">All Status</MenuItem>
                       <MenuItem value="active">Active</MenuItem>
                       <MenuItem value="inactive">Inactive</MenuItem>
                     </Select>
                     <Select
                       value={departmentFilter}
                       onChange={e => setDepartmentFilter(e.target.value)}
-                      className="!w-40"
                       size="small"
+                      placeholder="Department"
+                      className='!w-72'
                     >
-                      <MenuItem value="all">All Departments</MenuItem>
-                      <MenuItem value="1">Engineering</MenuItem>
-                      <MenuItem value="2">Product</MenuItem>
-                      <MenuItem value="3">Design</MenuItem>
-                      <MenuItem value="4">Analytics</MenuItem>
-                      <MenuItem value="5">Marketing</MenuItem>
-                      <MenuItem value="6">Sales</MenuItem>
-                      <MenuItem value="7">HR</MenuItem>
-                      <MenuItem value="8">Finance</MenuItem>
+                      {Array.isArray(departmentsResponse?.data) &&
+                        departmentsResponse.data.map((dept: any) => (
+                          <MenuItem key={dept.id} value={dept.id.toString()}>
+                            {dept.name}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </>
                 )}

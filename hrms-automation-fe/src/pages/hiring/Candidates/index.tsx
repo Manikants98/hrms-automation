@@ -1,4 +1,11 @@
-import { Add, Block, CheckCircle, Download, Upload } from '@mui/icons-material';
+import {
+  Add,
+  Block,
+  CheckCircle,
+  Download,
+  Upload,
+  Visibility,
+} from '@mui/icons-material';
 import {
   Alert,
   Avatar,
@@ -18,7 +25,8 @@ import { useExportToExcel } from 'hooks/useImportExport';
 import { usePermission } from 'hooks/usePermission';
 import { TrendingUp, User } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
-import { DeleteButton, EditButton } from 'shared/ActionButton';
+import { useNavigate } from 'react-router-dom';
+import { ActionButton, DeleteButton, EditButton } from 'shared/ActionButton';
 import Button from 'shared/Button';
 import { PopConfirm } from 'shared/DeleteConfirmation';
 import SearchInput from 'shared/SearchInput';
@@ -29,6 +37,7 @@ import ImportCandidate from './ImportCandidate';
 import ManageCandidate from './ManageCandidate';
 
 const CandidatesPage: React.FC = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [candidateStatusFilter, setCandidateStatusFilter] = useState('all');
@@ -82,6 +91,13 @@ const CandidatesPage: React.FC = () => {
     stats?.inactive_candidates ??
     candidates.filter(c => c.is_active === 'N').length;
   const newCandidatesThisMonth = stats?.new_candidates ?? 0;
+
+  const handleViewDetails = useCallback(
+    (candidate: Candidate) => {
+      navigate(`/hiring/candidates/${candidate.id}`);
+    },
+    [navigate]
+  );
 
   const handleCreateCandidate = useCallback(() => {
     setSelectedCandidate(null);
@@ -165,10 +181,9 @@ const CandidatesPage: React.FC = () => {
         <Box className="!flex !gap-2 !items-center">
           <Avatar
             alt={row.name}
+            src={row.profile_picture || 'mkx'}
             className="!rounded !bg-primary-100 !text-primary-500"
-          >
-            <User className="w-5 h-5" />
-          </Avatar>
+          />
           <Box className="!max-w-xs">
             <Typography
               variant="body1"
@@ -184,20 +199,20 @@ const CandidatesPage: React.FC = () => {
       ),
     },
     {
-      id: 'job_posting_title',
+      id: 'job_posting',
       label: 'Job Posting',
-      render: (_value, row) => (
+      render: value => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.job_posting_title || '-'}
+          {value.job_title || '-'}
         </Typography>
       ),
     },
     {
-      id: 'current_hiring_stage_name',
+      id: 'hiring_stage',
       label: 'Current Stage',
-      render: (_value, row) => (
+      render: value => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.current_hiring_stage_name || '-'}
+          {value.name || '-'}
         </Typography>
       ),
     },
@@ -239,14 +254,6 @@ const CandidatesPage: React.FC = () => {
           <span className="italic text-gray-400">No Date</span>
         ),
     },
-    {
-      id: 'createdate',
-      label: 'Created Date',
-      render: (_value, row) =>
-        formatDate(row.createdate) || (
-          <span className="italic text-gray-400">No Date</span>
-        ),
-    },
     ...(isUpdate || isDelete || isRead
       ? [
           {
@@ -255,6 +262,15 @@ const CandidatesPage: React.FC = () => {
             sortable: false,
             render: (_value: any, row: Candidate) => (
               <div className="!flex !gap-2 !items-center">
+                {isRead && (
+                  <ActionButton
+                    color="success"
+                    size="small"
+                    tooltip={`View ${row.name}`}
+                    icon={<Visibility />}
+                    onClick={() => handleViewDetails(row)}
+                  />
+                )}
                 {isUpdate && (
                   <EditButton
                     onClick={() => handleEditCandidate(row)}

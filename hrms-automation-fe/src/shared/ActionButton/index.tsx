@@ -23,7 +23,7 @@ const EditButton: React.FC<EditButtonProps> = ({
   onClick,
   disabled = false,
   tooltip = 'Edit',
-  size = 'medium',
+  size = 'small',
 }) => {
   const button = (
     <IconButton
@@ -35,7 +35,7 @@ const EditButton: React.FC<EditButtonProps> = ({
       disabled={disabled}
       className="!bg-blue-100 !rounded hover:!bg-blue-200 !text-blue-600"
     >
-      <Edit fontSize="small" />
+      <Edit />
     </IconButton>
   );
 
@@ -52,7 +52,7 @@ const DeleteButton: React.FC<DeleteButtonProps> = ({
   onClick,
   disabled = false,
   tooltip = 'Delete',
-  size = 'medium',
+  size = 'small',
   confirmDelete = true,
   itemName = 'this item',
 }) => {
@@ -62,7 +62,7 @@ const DeleteButton: React.FC<DeleteButtonProps> = ({
       disabled={disabled}
       className="!bg-red-100 !rounded hover:!bg-red-200 !text-red-600"
     >
-      <Delete fontSize="small" />
+      <Delete />
     </IconButton>
   );
 
@@ -87,7 +87,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   onClick,
   disabled = false,
   tooltip = 'Action',
-  size = 'medium',
+  size = 'small',
   icon,
   color = 'primary',
 }) => {

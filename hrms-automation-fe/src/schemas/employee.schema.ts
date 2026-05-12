@@ -12,15 +12,11 @@ export const employeeValidationSchema = Yup.object({
   phone_number: Yup.string()
     .max(20, 'Phone number must be less than 20 characters')
     .matches(/^[\+]?[1-9][\d]{0,15}$/, 'Invalid phone number format'),
-  employee_id: Yup.string().max(
-    50,
-    'Employee ID must be less than 50 characters'
-  ),
   department_id: Yup.number().required('Department is required'),
   designation_id: Yup.number().required('Designation is required'),
   shift_id: Yup.number().required('Shift is required'),
   reporting_manager_id: Yup.number(),
-  joining_date: Yup.string().required('Joining date is required'),
+  joining_date: Yup.string().required('Joining Date is required'),
   address: Yup.string().max(500, 'Address must be less than 500 characters'),
   profile_image: Yup.string().max(
     500,

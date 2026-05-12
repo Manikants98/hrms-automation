@@ -2,6 +2,7 @@ import axiosInstance from '../../configs/axio.config';
 import type { ApiResponse } from '../../types/api.types';
 
 export interface Candidate {
+  profile_picture: string;
   id: number;
   name: string;
   email: string;
@@ -11,6 +12,15 @@ export interface Candidate {
   current_hiring_stage_id?: number;
   current_hiring_stage_name?: string;
   resume_url?: string;
+  hiring_stage: {
+    code: string;
+    name: string;
+    id: number;
+  };
+  job_posting: {
+    id: number;
+    job_title: string;
+  };
   cover_letter_url?: string;
   application_date?: string;
   status:
@@ -103,10 +113,18 @@ export const deleteCandidate = async (
   return response.data;
 };
 
+export const fetchCandidatesDropdown = async (): Promise<
+  ApiResponse<Candidate[]>
+> => {
+  const response = await axiosInstance.get('/candidates/dropdown');
+  return response.data;
+};
+
 export default {
   fetchCandidates,
   fetchCandidateById,
   createCandidate,
   updateCandidate,
   deleteCandidate,
+  fetchCandidatesDropdown,
 };

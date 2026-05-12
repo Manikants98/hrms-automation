@@ -23,7 +23,6 @@ export const jobPostingValidationSchema = Yup.object({
         return value >= annual_salary_from;
       }
     ),
-  currency_code: Yup.string().required('Currency code is required'),
   designation_id: Yup.number().required('Designation is required'),
   experience: Yup.string().required('Experience is required'),
   posting_date: Yup.string().required('Posting date is required'),

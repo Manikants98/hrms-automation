@@ -33,6 +33,12 @@ router.get(
 );
 
 router.get(
+  '/candidates/dropdown',
+  authenticateToken,
+  candidatesController.getCandidatesDropdown
+);
+
+router.get(
   '/candidates/:id',
   authenticateToken,
   requirePermission([{ module: 'candidate', action: 'read' }]),

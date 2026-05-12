@@ -247,6 +247,7 @@ export const attachmentTypesController = {
           id: true,
           name: true,
           code: true,
+          description: true
         },
         orderBy: { name: 'asc' },
         take: 100,

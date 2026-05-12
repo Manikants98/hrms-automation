@@ -132,10 +132,10 @@ const SalaryStructurePage: React.FC = () => {
     salaryStructuresData.forEach(structure => {
       const earnings = structure.structure_items
         .filter(item => item.category === 'Earnings')
-        .reduce((sum, item) => sum + (item.value || 0), 0);
+        .reduce((sum, item) => sum + (parseFloat(item.value as any) || 0), 0);
       const deductions = structure.structure_items
         .filter(item => item.category === 'Deductions')
-        .reduce((sum, item) => sum + (item.value || 0), 0);
+        .reduce((sum, item) => sum + (parseFloat(item.value as any) || 0), 0);
 
       totalEarnings += earnings;
       totalDeductions += deductions;

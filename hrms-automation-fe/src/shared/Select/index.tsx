@@ -204,7 +204,8 @@ const Select: React.FC<CustomSelectProps> = ({
     <FormControl
       fullWidth={fullWidth}
       error={!!error}
-      sx={{ minWidth: '180px' }}
+      sx={{ minWidth: '150px' }}
+      className={className}
     >
       <Autocomplete
         options={options}

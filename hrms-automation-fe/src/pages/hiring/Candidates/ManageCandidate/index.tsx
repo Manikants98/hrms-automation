@@ -1,12 +1,12 @@
-import { Box, MenuItem, Typography } from '@mui/material';
+import { Box, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import {
   useCreateCandidate,
   useUpdateCandidate,
   type Candidate,
 } from 'hooks/useCandidates';
-import { useJobPostings } from 'hooks/useJobPostings';
 import { useHiringStages } from 'hooks/useHiringStages';
+import { useJobPostings } from 'hooks/useJobPostings';
 import React, { useMemo } from 'react';
 import { candidateValidationSchema } from 'schemas/candidate.schema';
 import ActiveInactiveField from 'shared/ActiveInactiveField';
@@ -136,192 +136,142 @@ const ManageCandidate: React.FC<ManageCandidateProps> = ({
       <Box className="!p-5">
         <form onSubmit={formik.handleSubmit}>
           <Box className="!space-y-6">
-            <Box>
-              <Typography
-                variant="h6"
-                className="!font-semibold !text-gray-900 !mb-4"
+            <Box className="!grid !grid-cols-1 md:!grid-cols-2 !gap-x-5 !gap-y-4">
+              <Input
+                name="name"
+                label="Name"
+                placeholder="Enter candidate name"
+                formik={formik}
+                required
+              />
+
+              <Input
+                name="email"
+                label="Email"
+                type="email"
+                placeholder="Enter email address"
+                formik={formik}
+                required
+              />
+
+              <Input
+                name="phone_number"
+                label="Phone Number"
+                placeholder="Enter phone number"
+                formik={formik}
+              />
+              <Select
+                name="job_posting_id"
+                label="Job Posting"
+                formik={formik}
+                required
               >
-                Personal Information
-              </Typography>
-              <Box className="!grid !grid-cols-1 md:!grid-cols-2 !gap-x-5 !gap-y-4">
-                <Input
-                  name="name"
-                  label="Name"
-                  placeholder="Enter candidate name"
-                  formik={formik}
-                  required
-                />
+                <MenuItem value="">-- Select --</MenuItem>
+                {availableJobPostings.map(jp => (
+                  <MenuItem key={jp.id} value={jp.id}>
+                    {jp.job_title}
+                  </MenuItem>
+                ))}
+              </Select>
 
-                <Input
-                  name="email"
-                  label="Email"
-                  type="email"
-                  placeholder="Enter email address"
-                  formik={formik}
-                  required
-                />
+              <Select
+                name="current_hiring_stage_id"
+                label="Current Hiring Stage"
+                formik={formik}
+              >
+                <MenuItem value="">-- Select --</MenuItem>
+                {filteredHiringStages.map(stage => (
+                  <MenuItem key={stage.id} value={stage.id}>
+                    {stage.name}
+                  </MenuItem>
+                ))}
+              </Select>
 
-                <Input
-                  name="phone_number"
-                  label="Phone Number"
-                  placeholder="Enter phone number"
-                  formik={formik}
-                />
-              </Box>
+              <Input
+                name="application_date"
+                label="Application Date"
+                type="date"
+                formik={formik}
+                required
+              />
+
+              <Select name="status" label="Status" formik={formik} required>
+                <MenuItem value="Applied">Applied</MenuItem>
+                <MenuItem value="Screening">Screening</MenuItem>
+                <MenuItem value="Interview">Interview</MenuItem>
+                <MenuItem value="Offer">Offer</MenuItem>
+                <MenuItem value="Hired">Hired</MenuItem>
+                <MenuItem value="Rejected">Rejected</MenuItem>
+                <MenuItem value="Withdrawn">Withdrawn</MenuItem>
+              </Select>
+              <Input
+                name="experience_years"
+                label="Experience (Years)"
+                type="number"
+                placeholder="Enter years of experience"
+                formik={formik}
+              />
+
+              <Input
+                name="skills"
+                label="Skills"
+                placeholder="Enter skills (comma separated)"
+                formik={formik}
+              />
+
+              <Input
+                name="current_salary"
+                label="Current Salary"
+                type="number"
+                placeholder="Enter current salary"
+                formik={formik}
+              />
+
+              <Input
+                name="expected_salary"
+                label="Expected Salary"
+                type="number"
+                placeholder="Enter expected salary"
+                formik={formik}
+              />
+
+              <Input
+                name="notice_period"
+                label="Notice Period"
+                placeholder="Enter notice period"
+                formik={formik}
+              />
+
+              <Input
+                name="availability_date"
+                label="Availability Date"
+                type="date"
+                formik={formik}
+              />
+              <Input
+                name="resume_url"
+                label="Resume URL"
+                placeholder="Enter resume URL or file path"
+                formik={formik}
+              />
+
+              <Input
+                name="cover_letter_url"
+                label="Cover Letter URL"
+                placeholder="Enter cover letter URL or file path"
+                formik={formik}
+              />
             </Box>
 
-            <Box>
-              <Typography
-                variant="h6"
-                className="!font-semibold !text-gray-900 !mb-4"
-              >
-                Application Details
-              </Typography>
-              <Box className="!grid !grid-cols-1 md:!grid-cols-2 !gap-x-5 !gap-y-4">
-                <Select
-                  name="job_posting_id"
-                  label="Job Posting"
-                  formik={formik}
-                  required
-                >
-                  <MenuItem value="">-- Select --</MenuItem>
-                  {availableJobPostings.map(jp => (
-                    <MenuItem key={jp.id} value={jp.id}>
-                      {jp.job_title}
-                    </MenuItem>
-                  ))}
-                </Select>
-
-                <Select
-                  name="current_hiring_stage_id"
-                  label="Current Hiring Stage"
-                  formik={formik}
-                >
-                  <MenuItem value="">-- Select --</MenuItem>
-                  {filteredHiringStages.map(stage => (
-                    <MenuItem key={stage.id} value={stage.id}>
-                      {stage.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-
-                <Input
-                  name="application_date"
-                  label="Application Date"
-                  type="date"
-                  formik={formik}
-                  required
-                />
-
-                <Select name="status" label="Status" formik={formik} required>
-                  <MenuItem value="Applied">Applied</MenuItem>
-                  <MenuItem value="Screening">Screening</MenuItem>
-                  <MenuItem value="Interview">Interview</MenuItem>
-                  <MenuItem value="Offer">Offer</MenuItem>
-                  <MenuItem value="Hired">Hired</MenuItem>
-                  <MenuItem value="Rejected">Rejected</MenuItem>
-                  <MenuItem value="Withdrawn">Withdrawn</MenuItem>
-                </Select>
-              </Box>
-            </Box>
-
-            <Box>
-              <Typography
-                variant="h6"
-                className="!font-semibold !text-gray-900 !mb-4"
-              >
-                Professional Information
-              </Typography>
-              <Box className="!grid !grid-cols-1 md:!grid-cols-2 !gap-x-5 !gap-y-4">
-                <Input
-                  name="experience_years"
-                  label="Experience (Years)"
-                  type="number"
-                  placeholder="Enter years of experience"
-                  formik={formik}
-                />
-
-                <Input
-                  name="skills"
-                  label="Skills"
-                  placeholder="Enter skills (comma separated)"
-                  formik={formik}
-                />
-
-                <Input
-                  name="current_salary"
-                  label="Current Salary"
-                  type="number"
-                  placeholder="Enter current salary"
-                  formik={formik}
-                />
-
-                <Input
-                  name="expected_salary"
-                  label="Expected Salary"
-                  type="number"
-                  placeholder="Enter expected salary"
-                  formik={formik}
-                />
-
-                <Input
-                  name="notice_period"
-                  label="Notice Period"
-                  placeholder="Enter notice period"
-                  formik={formik}
-                />
-
-                <Input
-                  name="availability_date"
-                  label="Availability Date"
-                  type="date"
-                  formik={formik}
-                />
-              </Box>
-            </Box>
-
-            <Box>
-              <Typography
-                variant="h6"
-                className="!font-semibold !text-gray-900 !mb-4"
-              >
-                Documents
-              </Typography>
-              <Box className="!grid !grid-cols-1 md:!grid-cols-2 !gap-x-5 !gap-y-4">
-                <Input
-                  name="resume_url"
-                  label="Resume URL"
-                  placeholder="Enter resume URL or file path"
-                  formik={formik}
-                />
-
-                <Input
-                  name="cover_letter_url"
-                  label="Cover Letter URL"
-                  placeholder="Enter cover letter URL or file path"
-                  formik={formik}
-                />
-              </Box>
-            </Box>
-
-            <Box>
-              <Typography
-                variant="h6"
-                className="!font-semibold !text-gray-900 !mb-4"
-              >
-                Additional Information
-              </Typography>
-              <Box className="md:!col-span-2">
-                <Input
-                  name="notes"
-                  label="Notes"
-                  placeholder="Enter additional notes or comments"
-                  formik={formik}
-                  multiline
-                  rows={4}
-                />
-              </Box>
-            </Box>
+            <Input
+              name="notes"
+              label="Notes"
+              placeholder="Enter additional notes or comments"
+              formik={formik}
+              className="md:!col-span-2"
+              multiline
+              rows={4}
+            />
 
             <Box className="md:!col-span-2">
               <ActiveInactiveField

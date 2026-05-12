@@ -101,11 +101,13 @@ export const userController = {
         currency_code,
         phone_number,
         address,
-        employee_id,
+        employee_id: inputEmployeeId,
         joining_date,
         reporting_to,
         is_active,
       } = req.body;
+
+      let employee_id = inputEmployeeId;
 
       const existingUser = await prisma.users.findFirst({
         where: { email, is_active: 'Y' },
@@ -123,6 +125,20 @@ export const userController = {
           res.error('Employee ID already exists', 400);
           return;
         }
+      } else {
+        // Auto-generate employee ID if not provided
+        const prefix = 'EMP';
+        const year = new Date().getFullYear();
+        const count = await prisma.users.count({
+          where: {
+            employee_id: {
+              startsWith: `${prefix}${year}`
+            },
+            is_active: 'Y'
+          }
+        });
+        const sequence = String(count + 1).padStart(3, '0');
+        employee_id = `${prefix}${year}${sequence}`;
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -181,8 +197,12 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
-          employees_department: { select: { id: true, name: true, code: true } },
-          employees_designation: { select: { id: true, name: true, code: true } },
+          employees_department: {
+            select: { id: true, name: true, code: true },
+          },
+          employees_designation: {
+            select: { id: true, name: true, code: true },
+          },
           employees_shift: { select: { id: true, name: true, code: true } },
           users: { select: { id: true, name: true, email: true } },
         },
@@ -248,6 +268,13 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
+          employees_department: {
+            select: { id: true, name: true, code: true },
+          },
+          employees_designation: {
+            select: { id: true, name: true, code: true },
+          },
+          employees_shift: { select: { id: true, name: true, code: true } },
           users: {
             select: {
               id: true,
@@ -310,6 +337,13 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
+          employees_department: {
+            select: { id: true, name: true, code: true },
+          },
+          employees_designation: {
+            select: { id: true, name: true, code: true },
+          },
+          employees_shift: { select: { id: true, name: true, code: true } },
           users: {
             select: {
               id: true,
@@ -456,8 +490,9 @@ export const userController = {
         updateData.is_active = is_active;
       }
 
-      if (updateData.role_id) {
-        updateData.role_id = Number(updateData.role_id);
+      // Handle role_id separately if provided
+      if (userData.role_id !== undefined) {
+        updateData.role_id = Number(userData.role_id);
       }
 
       const updatedUser = await prisma.users.update({
@@ -466,8 +501,12 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
-          employees_department: { select: { id: true, name: true, code: true } },
-          employees_designation: { select: { id: true, name: true, code: true } },
+          employees_department: {
+            select: { id: true, name: true, code: true },
+          },
+          employees_designation: {
+            select: { id: true, name: true, code: true },
+          },
           employees_shift: { select: { id: true, name: true, code: true } },
           users: { select: { id: true, name: true, email: true } },
         },
@@ -639,8 +678,12 @@ export const userController = {
         include: {
           user_role: true,
           companies: true,
-          employees_department: { select: { id: true, name: true, code: true } },
-          employees_designation: { select: { id: true, name: true, code: true } },
+          employees_department: {
+            select: { id: true, name: true, code: true },
+          },
+          employees_designation: {
+            select: { id: true, name: true, code: true },
+          },
           employees_shift: { select: { id: true, name: true, code: true } },
           users: { select: { id: true, name: true, email: true } },
         },

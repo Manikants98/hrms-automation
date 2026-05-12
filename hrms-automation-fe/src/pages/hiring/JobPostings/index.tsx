@@ -3,6 +3,7 @@ import {
   Alert,
   Avatar,
   Box,
+  Chip,
   FormControl,
   MenuItem,
   Select as MuiSelect,
@@ -151,29 +152,29 @@ const JobPostingsPage: React.FC = () => {
       ),
     },
     {
-      id: 'department_name',
+      id: 'department',
       label: 'Department',
-      render: (_value, row) => (
+      render: value => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.department_name || '-'}
+          {value.name || '-'}
         </Typography>
       ),
     },
     {
-      id: 'designation_name',
+      id: 'designation',
       label: 'Designation',
-      render: (_value, row) => (
+      render: value => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.designation_name || '-'}
+          {value.name || '-'}
         </Typography>
       ),
     },
     {
-      id: 'reporting_manager_name',
+      id: 'manager',
       label: 'Reporting Manager',
-      render: (_value, row) => (
+      render: value => (
         <Typography variant="body2" className="!text-gray-900">
-          {row.reporting_manager_name || '-'}
+          {value.name || '-'}
         </Typography>
       ),
     },
@@ -183,7 +184,7 @@ const JobPostingsPage: React.FC = () => {
       render: (_value, row) => (
         <Typography variant="body2" className="!text-gray-900">
           {row.annual_salary_from && row.annual_salary_to
-            ? `${row.currency_code || ''} ${row.annual_salary_from.toLocaleString()} - ${row.annual_salary_to.toLocaleString()}`
+            ? `₹${row.annual_salary_from.toLocaleString()} - ${row.annual_salary_to.toLocaleString()}`
             : '-'}
         </Typography>
       ),
@@ -214,12 +215,19 @@ const JobPostingsPage: React.FC = () => {
       ),
     },
     {
-      id: 'createdate',
-      label: 'Created Date',
-      render: (_value, row) =>
-        formatDate(row.createdate) || (
-          <span className="italic text-gray-400">No Date</span>
-        ),
+      id: 'is_active',
+      label: 'Status',
+      render: (_value, row) => (
+        <>
+          <Chip
+            label={row.is_active === 'Y' ? 'Active' : 'Inactive'}
+            size="small"
+            icon={row.is_active === 'Y' ? <CheckCircle /> : <Block />}
+            color={row.is_active === 'Y' ? 'success' : 'error'}
+            variant="outlined"
+          />
+        </>
+      ),
     },
     ...(isUpdate || isDelete || isRead
       ? [

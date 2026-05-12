@@ -81,6 +81,10 @@ export const BACKEND_MODULES = [
   'payroll-processing',
   'salary-slips',
   'audit-logs',
+  'department',
+  'designation',
+  'attachment-type',
+  'shift',
 ] as const;
 
 export type BackendModule = (typeof BACKEND_MODULES)[number];
@@ -115,6 +119,10 @@ const MANUAL_PERMISSION_OVERRIDES: Record<string, BackendModule> = {
   'customer-category': 'customer-category',
   'customer-type': 'customer-type',
   'outlet-channel': 'customer-channel',
+  departments: 'department',
+  designations: 'designation',
+  'attachment-types': 'attachment-type',
+  shifts: 'shift',
   'order-entry': 'order',
   'delivery-scheduling': 'delivery',
   'return-requests': 'return',
@@ -160,9 +168,9 @@ const MANUAL_PERMISSION_OVERRIDES: Record<string, BackendModule> = {
   // HRMS manual overrides
   'hiring-stages': 'hiring-stages',
   'job-postings': 'job-postings',
-  'candidates': 'candidates',
-  'employees': 'employees',
-  'attendance': 'attendance',
+  candidates: 'candidates',
+  employees: 'employees',
+  attendance: 'attendance',
   'leave-application': 'leave-application',
   'leave-balance': 'leave-balance',
   'salary-structure': 'salary-structure',

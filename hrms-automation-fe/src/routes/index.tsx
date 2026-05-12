@@ -26,7 +26,11 @@ import HiringDashboard from 'pages/hiring/Dashboard';
 import HiringStages from 'pages/hiring/HiringStages';
 import JobPostings from 'pages/hiring/JobPostings';
 import Candidates from 'pages/hiring/Candidates';
+import CandidateDetail from 'pages/hiring/Candidates/CandidateDetail';
 import Employees from 'pages/masters/Employees';
+import Departments from 'pages/masters/Departments';
+import Designations from 'pages/masters/Designations';
+import AttachmentTypes from 'pages/masters/AttachmentTypes';
 import PayrollDashboard from 'pages/payroll/Dashboard';
 import SalaryStructure from 'pages/payroll/SalaryStructure';
 import PayrollProcessing from 'pages/payroll/Processing';
@@ -77,8 +81,40 @@ const router = createBrowserRouter(
           element: <Candidates />,
         },
         {
+          path: '/hiring/candidates/:id',
+          element: (
+            <PermissionGuard module="candidate" action="read">
+              <CandidateDetail />
+            </PermissionGuard>
+          ),
+        },
+        {
           path: '/masters/employees',
           element: <Employees />,
+        },
+        {
+          path: '/masters/departments',
+          element: (
+            <PermissionGuard module="department" action="read">
+              <Departments />
+            </PermissionGuard>
+          ),
+        },
+        {
+          path: '/masters/designations',
+          element: (
+            <PermissionGuard module="designation" action="read">
+              <Designations />
+            </PermissionGuard>
+          ),
+        },
+        {
+          path: '/masters/attachment-types',
+          element: (
+            <PermissionGuard module="attachment-type" action="read">
+              <AttachmentTypes />
+            </PermissionGuard>
+          ),
         },
         {
           path: '/attendance/dashboard',

@@ -14,6 +14,7 @@ export interface Employee {
   designation_id?: number;
   designation_name?: string;
   shift_id?: number;
+  joining_date?: string;
   shift_name?: string;
   company_id?: number;
   company_name?: string;
@@ -24,7 +25,6 @@ export interface Employee {
   address?: string;
   emergency_contact?: string;
   blood_group?: string;
-  status: 'Active' | 'Inactive' | 'On Leave' | 'Terminated';
   createdate?: string;
   updatedate?: string;
   is_active: 'Y' | 'N';
@@ -37,7 +37,6 @@ export interface GetEmployeesParams {
   role_id?: number;
   department_id?: number;
   designation_id?: number;
-  status?: Employee['status'];
   isActive?: 'Y' | 'N';
 }
 
@@ -57,8 +56,8 @@ export interface ManageEmployeePayload {
   address?: string;
   emergency_contact?: string;
   blood_group?: string;
-  status: Employee['status'];
   is_active: 'Y' | 'N';
+  password?: string; // Optional password for new employees
 }
 
 export interface UpdateEmployeePayload extends ManageEmployeePayload {
@@ -107,11 +106,15 @@ export const uploadProfileImage = async (
 ): Promise<ApiResponse<{ profile_image: string }>> => {
   const formData = new FormData();
   formData.append('file', file);
-  const response = await axiosInstance.post(`/users/${id}/profile-image`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const response = await axiosInstance.post(
+    `/users/${id}/profile-image`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
   return response.data;
 };
 

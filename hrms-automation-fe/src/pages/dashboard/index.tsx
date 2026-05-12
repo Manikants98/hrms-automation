@@ -37,7 +37,7 @@ import React, { useMemo } from 'react';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import StatsCard from 'shared/StatsCard';
 import Table from 'shared/Table';
-import { formatDate } from 'utils/dateUtils';
+import { formatDate, formatDateTime } from 'utils/dateUtils';
 
 ChartJS.register(
   CategoryScale,
@@ -783,7 +783,7 @@ const HRDashboard: React.FC = () => {
               label: 'Punch In',
               render: (_value, row: AttendanceRecord) => (
                 <Typography variant="body2" className="!text-gray-900">
-                  {row.punch_in_time || '-'}
+                  {formatDateTime(row.punch_in_time) || '-'}
                 </Typography>
               ),
             },

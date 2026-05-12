@@ -5,11 +5,14 @@ import {
   MdAssignment,
   MdAttachMoney,
   MdBarChart,
+  MdBusiness,
   MdFolder,
   MdPeople,
   MdPerson,
   MdPersonAdd,
   MdSettings,
+  MdWork,
+  MdAttachFile,
 } from 'react-icons/md';
 
 export interface MenuItem {
@@ -69,6 +72,24 @@ const menuItems: MenuItem[] = [
         label: 'Employees',
         icon: MdPeople,
         href: '/masters/employees',
+      },
+      {
+        id: 'departments',
+        label: 'Departments',
+        icon: MdBusiness,
+        href: '/masters/departments',
+      },
+      {
+        id: 'designations',
+        label: 'Designations',
+        icon: MdWork,
+        href: '/masters/designations',
+      },
+      {
+        id: 'attachment-types',
+        label: 'Attachment Types',
+        icon: MdAttachFile,
+        href: '/masters/attachment-types',
       },
       {
         id: 'attendance',

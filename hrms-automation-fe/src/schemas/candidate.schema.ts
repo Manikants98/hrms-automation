@@ -13,7 +13,7 @@ export const candidateValidationSchema = Yup.object({
     .max(20, 'Phone number must be less than 20 characters')
     .matches(/^[\+]?[1-9][\d]{0,15}$/, 'Invalid phone number format'),
   job_posting_id: Yup.number().required('Job posting is required'),
-  current_hiring_stage_id: Yup.number(),
+  current_hiring_stage_id: Yup.number().nullable().notRequired(),
   resume_url: Yup.string().max(
     500,
     'Resume URL must be less than 500 characters'
